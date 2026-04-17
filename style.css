@@ -1,0 +1,1598 @@
+@import '@fontsource/press-start-2p/400.css';
+@import '@fontsource/pixelify-sans/400.css';
+@import '@fontsource/pixelify-sans/700.css';
+
+:root {
+  --paper: #fae4c0;
+  --ink: #3b2a18;
+  --gold: #e4b567;
+  --gold-deep: #a07130;
+  --gold-dark: #5f431b;
+  --bronze: #8d5a26;
+  --parchment: #f0d6a1;
+  --parchment-shadow: #c9a66a;
+  --shadow: #1a0f06;
+  --ui-bg: #271b12;
+  --wine: #b84a6a;
+  /* Purple — Aida's favorite colour. Softer, cuter lavender. */
+  --purple: #b584ff;
+  --purple-deep: #7e4dc0;
+  --purple-bright: #e0b8ff;
+  --purple-glow: rgba(181, 132, 255, 0.45);
+  --rose: #ff9ec7;
+  --sky: #9cd9ff;
+  --mint: #b7eacf;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  color: var(--paper);
+  font-family: 'Press Start 2P', 'Pixelify Sans', system-ui, monospace;
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #2b1a3a 0%, #0b0510 100%);
+}
+
+#stage {
+  position: relative;
+  width: min(100vw, calc(100vh * 16 / 9));
+  height: min(100vh, calc(100vw * 9 / 16));
+  aspect-ratio: 16 / 9;
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The 4:3 "screen" lives inside the 16:9 stage, centred with pastel gutters. */
+#screen {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  max-width: 100%;
+  background: #000;
+  box-shadow: 0 0 60px var(--purple-glow);
+  overflow: hidden;
+}
+
+#game {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  display: block;
+}
+
+#ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-family: 'Press Start 2P', 'Pixelify Sans', system-ui, monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--paper);
+  text-shadow: 2px 2px 0 var(--shadow);
+}
+
+#ui > * {
+  pointer-events: auto;
+}
+
+/* =========================================================================
+   PRELOAD
+   ========================================================================= */
+
+.preload {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(255, 170, 220, 0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 70%, rgba(180, 130, 255, 0.4) 0%, transparent 55%),
+    linear-gradient(135deg, #2a0f3a 0%, #3a1430 100%);
+}
+
+.preload-heart {
+  font-size: 56px;
+  filter: drop-shadow(0 0 20px rgba(255, 200, 230, 0.7));
+  animation: heartBeat 1.6s ease-in-out infinite;
+}
+
+.preload-bar {
+  width: 60%;
+  height: 14px;
+  background: rgba(30, 10, 40, 0.6);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 2px var(--purple-deep),
+    0 0 10px var(--purple-glow);
+  overflow: hidden;
+}
+
+.preload-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rose) 0%, var(--purple) 50%, var(--purple-bright) 100%);
+  width: 0%;
+  transition: width 150ms ease-out;
+  box-shadow: 0 0 12px var(--rose);
+  border-radius: 10px;
+}
+
+.preload-msg {
+  color: var(--purple-bright);
+  font-family: 'Pixelify Sans', system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  opacity: 0.85;
+}
+
+/* =========================================================================
+   W2 chunky BUTTON — shared
+   ========================================================================= */
+
+.wc-btn {
+  display: inline-block;
+  padding: 14px 24px;
+  background: var(--purple-deep);
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  text-shadow: 2px 2px 0 var(--shadow);
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  outline: 0;
+  box-shadow:
+    inset 0 0 0 2px var(--rose),
+    inset 0 0 0 4px var(--purple),
+    inset 0 0 0 6px var(--purple-deep),
+    0 0 0 2px var(--shadow),
+    0 0 12px var(--purple-glow);
+  transition: transform 60ms ease, background 120ms ease;
+}
+.wc-btn:hover {
+  background: var(--purple);
+  color: var(--paper);
+  text-shadow: 1px 1px 0 var(--shadow);
+  box-shadow:
+    inset 0 0 0 2px var(--purple-bright),
+    inset 0 0 0 4px var(--rose),
+    inset 0 0 0 6px var(--purple),
+    0 0 0 2px var(--shadow),
+    0 0 20px var(--purple-glow);
+}
+.wc-btn:active {
+  transform: translate(1px, 1px);
+}
+.wc-btn.small {
+  padding: 10px 16px;
+  font-size: 11px;
+}
+
+/* =========================================================================
+   TITLE SCREEN
+   ========================================================================= */
+
+/* =========================================================================
+   BIRTHDAY CARD — title screen: cover you tap to open, inside note → begin
+   ========================================================================= */
+
+.birthday-card-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255, 170, 220, 0.42) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(180, 130, 255, 0.42) 0%, transparent 60%),
+    linear-gradient(135deg, #2a0f3a 0%, #3a1430 50%, #2b0f3a 100%);
+  animation: fadeIn 500ms ease-out;
+  overflow: hidden;
+  perspective: 1600px;
+}
+.birthday-card-scene.fading {
+  animation: fadeOut 360ms ease-out forwards;
+}
+
+.birthday-card {
+  position: relative;
+  width: min(78%, 460px);
+  height: min(82%, 560px);
+  transform-style: preserve-3d;
+  transition: transform 900ms cubic-bezier(0.5, 0, 0.2, 1);
+  z-index: 2;
+}
+.birthday-card.opened {
+  transform: rotateY(-160deg) translateX(-30%);
+}
+/* Next-page transition on the title card: simple opacity fade (no flip). */
+.birthday-card.turning {
+  transition: opacity 260ms ease-out;
+}
+.birthday-card.opened.turning {
+  /* Stay at its opened-flat angle, just fade. */
+  opacity: 0;
+}
+
+.card-cover,
+.card-inside {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 3px var(--shadow),
+    0 18px 50px rgba(181, 132, 255, 0.45);
+}
+
+.card-cover {
+  background: linear-gradient(160deg, #e3b6ef 0%, #c080ff 50%, #b568d8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+}
+.card-border {
+  position: absolute;
+  inset: 12px;
+  border: 3px dashed rgba(255, 255, 255, 0.75);
+  border-radius: 10px;
+  pointer-events: none;
+}
+.card-front-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  padding: 0 40px;
+}
+.card-heart {
+  font-size: 72px;
+  filter: drop-shadow(0 0 16px rgba(255, 200, 230, 0.9));
+  animation: heartBeat 2.2s ease-in-out infinite;
+}
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  20% { transform: scale(1.14); }
+  40% { transform: scale(0.95); }
+  60% { transform: scale(1.08); }
+}
+.card-cover-title {
+  font-family: 'Press Start 2P', 'Pixelify Sans', monospace;
+  font-size: 28px;
+  color: #fff;
+  letter-spacing: 3px;
+  text-shadow: 3px 3px 0 rgba(90, 30, 130, 0.7);
+}
+.card-cover-sub {
+  font-family: 'Press Start 2P', 'Pixelify Sans', monospace;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 5px;
+  margin-top: 4px;
+}
+.card-open-btn {
+  margin-top: 28px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--purple-deep);
+  text-shadow: none;
+  border-radius: 14px;
+  padding: 14px 32px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  box-shadow:
+    inset 0 0 0 2px var(--purple-deep),
+    inset 0 0 0 4px var(--rose),
+    0 0 0 2px var(--shadow),
+    0 0 18px rgba(255, 255, 255, 0.6);
+}
+.card-open-btn:hover {
+  background: var(--rose);
+  color: #fff;
+  text-shadow: 1px 1px 0 var(--shadow);
+  box-shadow:
+    inset 0 0 0 2px var(--purple-bright),
+    inset 0 0 0 4px var(--purple-deep),
+    0 0 0 2px var(--shadow),
+    0 0 24px var(--rose);
+}
+
+.card-inside {
+  transform: rotateY(180deg);
+  background: linear-gradient(180deg, #fff3fb 0%, #fce2f5 60%, #f7d1eb 100%);
+  color: #3a1a3a;
+  padding: 32px 34px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.card-inside-border {
+  position: absolute;
+  inset: 10px;
+  border: 2px dashed rgba(126, 77, 192, 0.55);
+  border-radius: 10px;
+  pointer-events: none;
+}
+.card-inside-note {
+  font-family: 'Pixelify Sans', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #2a1a3a;
+  text-shadow: none;
+  overflow-y: auto;
+  padding-right: 4px;
+  flex: 1 1 auto;
+}
+.card-inside-note p {
+  margin-bottom: 10px;
+}
+.card-inside-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.card-signature {
+  font-family: 'Pixelify Sans', system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--purple-deep);
+  text-align: right;
+  text-shadow: none;
+  margin-top: 4px;
+}
+
+/* Legacy title screen — kept as a fallback but largely unused now. */
+.title-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: radial-gradient(ellipse at center, #3a1f0d 0%, #0a0604 80%);
+  animation: fadeIn 400ms ease-out;
+}
+
+.title-crest {
+  width: 96px;
+  height: 96px;
+  background:
+    radial-gradient(circle, var(--gold) 0 28%, transparent 29%),
+    radial-gradient(circle, var(--purple) 0 18%, transparent 19%),
+    linear-gradient(135deg, var(--gold-deep) 0%, var(--purple-deep) 100%);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 3px var(--gold-deep),
+    inset 0 0 0 5px var(--gold),
+    inset 0 0 0 7px var(--bronze),
+    0 0 40px var(--purple-glow);
+  margin-bottom: 10px;
+  position: relative;
+}
+.title-crest::after {
+  content: '❤';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--purple-bright);
+  font-size: 28px;
+  text-shadow: 2px 2px 0 var(--shadow);
+}
+
+.title-main {
+  font-size: 56px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-shadow:
+    4px 4px 0 var(--purple-deep),
+    6px 6px 0 var(--shadow);
+  font-weight: 700;
+}
+
+.title-sub {
+  font-size: 16px;
+  color: var(--purple-bright);
+  letter-spacing: 4px;
+  margin-bottom: 28px;
+}
+
+.title-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title-footer {
+  position: absolute;
+  bottom: 24px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--rose);
+  opacity: 0.85;
+}
+
+/* =========================================================================
+   PARCHMENT CARD  (briefings + outros)
+   ========================================================================= */
+
+.briefing-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.72);
+  animation: fadeIn 240ms ease-out;
+}
+.briefing-scene.fading {
+  animation: fadeOut 280ms ease-out forwards;
+}
+
+.parchment {
+  position: relative;
+  width: min(76%, 560px);
+  max-height: 80%;
+  padding: 36px 40px 32px;
+  background: linear-gradient(180deg, #f5e6ff 0%, #ead0f0 50%, #f8dcec 100%);
+  color: #2a1a3a;
+  text-shadow: none;
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 0 3px var(--purple-deep),
+    inset 0 0 0 6px var(--rose),
+    0 0 0 2px var(--shadow),
+    0 12px 40px rgba(126, 77, 192, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.parchment.small {
+  width: min(60%, 460px);
+  padding: 28px 32px 26px;
+}
+
+.parchment-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--purple-deep);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--rose);
+}
+.parchment-corner.tl {
+  top: -3px;
+  left: -3px;
+}
+.parchment-corner.tr {
+  top: -3px;
+  right: -3px;
+}
+.parchment-corner.bl {
+  bottom: -3px;
+  left: -3px;
+}
+.parchment-corner.br {
+  bottom: -3px;
+  right: -3px;
+}
+
+.parchment-chapter {
+  font-size: 12px;
+  letter-spacing: 5px;
+  color: var(--purple-deep);
+  font-weight: 700;
+}
+
+.parchment-when {
+  font-size: 10px;
+  color: var(--purple-deep);
+  letter-spacing: 2px;
+  margin-top: -2px;
+  margin-bottom: 6px;
+  opacity: 0.9;
+  text-align: center;
+}
+
+.parchment-title {
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: #2a1a3a;
+  text-align: center;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.parchment-body {
+  font-family: 'Press Start 2P', 'Pixelify Sans', system-ui, monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #2a1a3a;
+  min-height: 80px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 0 12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* =========================================================================
+   DIALOGUE BOX
+   ========================================================================= */
+
+.dialogue-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: auto;
+  cursor: pointer;
+  animation: fadeIn 180ms ease-out;
+}
+
+.dialogue-box {
+  width: 92%;
+  margin: 0 4% 4%;
+  background: var(--ui-bg);
+  color: var(--paper);
+  padding: 12px;
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  box-shadow:
+    inset 0 0 0 2px var(--gold),
+    inset 0 0 0 4px var(--gold-deep),
+    inset 0 0 0 6px var(--bronze),
+    0 0 0 2px var(--shadow),
+    0 8px 24px rgba(0, 0, 0, 0.6);
+  min-height: 110px;
+}
+
+.dialogue-portrait {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px 4px;
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0 0 0 1px var(--gold-deep);
+}
+
+.dialogue-portrait canvas {
+  width: 80px;
+  height: 80px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #000;
+}
+
+.dialogue-name {
+  font-size: 8px;
+  color: var(--purple-bright);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.dialogue-main {
+  flex: 1 1 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 12px 4px;
+  overflow: hidden;
+}
+
+.dialogue-text {
+  font-size: 10px;
+  line-height: 1.9;
+  flex: 1 1 auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.dialogue-arrow {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  color: var(--gold);
+  font-size: 10px;
+  animation: blink 900ms steps(2, end) infinite;
+}
+
+.dialogue-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  align-items: flex-start;
+}
+
+/* =========================================================================
+   NARRATION — low-key scene-direction caption at the bottom
+   ========================================================================= */
+
+.narration-scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  animation: fadeIn 240ms ease-out;
+}
+
+.narration-card {
+  position: relative;
+  width: 88%;
+  margin: 6% 0 0;
+  background: linear-gradient(180deg, rgba(40, 20, 60, 0.92), rgba(20, 10, 30, 0.92));
+  color: var(--paper);
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 12px;
+  box-shadow:
+    inset 0 0 0 2px var(--purple),
+    inset 0 0 0 3px var(--rose),
+    0 0 0 2px var(--shadow),
+    0 6px 20px var(--purple-glow);
+  text-align: center;
+}
+
+.narration-text {
+  font-family: 'Press Start 2P', 'Pixelify Sans', system-ui, monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--parchment);
+  font-style: normal;
+  text-shadow: 1px 1px 0 var(--shadow);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.narration-arrow {
+  position: absolute;
+  bottom: 2px;
+  right: 8px;
+  color: var(--purple-bright);
+  font-size: 9px;
+  animation: blink 900ms steps(2, end) infinite;
+}
+
+.narration-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+  align-items: center;
+}
+.narration-choices .wc-btn {
+  padding: 7px 14px;
+  font-size: 8px;
+}
+
+/* =========================================================================
+   SPEECH BUBBLES — positioned over speaker
+   ========================================================================= */
+
+.bubble-scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  animation: fadeIn 160ms ease-out;
+}
+
+.speech-bubble {
+  position: absolute;
+  background: var(--paper);
+  color: var(--ink);
+  border: 0;
+  border-radius: 14px;
+  padding: 8px 12px 10px;
+  min-width: 90px;
+  max-width: 200px;
+  text-shadow: none;
+  box-shadow:
+    inset 0 0 0 2px var(--purple),
+    inset 0 0 0 3px var(--rose),
+    0 0 0 2px var(--shadow),
+    0 8px 20px rgba(126, 77, 192, 0.35);
+  animation: bubbleIn 220ms cubic-bezier(0.2, 0.9, 0.3, 1.25);
+}
+
+/* Per-speaker colours. Each character gets a distinct bubble tint. */
+.speech-bubble.color-aida {
+  background: #f5e0ff;
+  color: #2a0f3a;
+  box-shadow:
+    inset 0 0 0 2px #b584ff,
+    inset 0 0 0 3px #e0b8ff,
+    0 0 0 2px var(--shadow),
+    0 8px 20px rgba(181, 132, 255, 0.4);
+}
+.speech-bubble.color-aida .speech-tail { border-top-color: #b584ff; border-bottom-color: #b584ff; }
+
+.speech-bubble.color-david {
+  background: #dff0ff;
+  color: #0a1c3a;
+  box-shadow:
+    inset 0 0 0 2px #4a78cc,
+    inset 0 0 0 3px #9cc0ff,
+    0 0 0 2px var(--shadow),
+    0 8px 20px rgba(74, 120, 204, 0.45);
+}
+.speech-bubble.color-david .speech-tail { border-top-color: #4a78cc; border-bottom-color: #4a78cc; }
+
+.speech-bubble.color-lisa {
+  background: #ffe4ee;
+  color: #3a0f1e;
+  box-shadow:
+    inset 0 0 0 2px #d84a7e,
+    inset 0 0 0 3px #ff9ec7,
+    0 0 0 2px var(--shadow),
+    0 8px 20px rgba(216, 74, 126, 0.4);
+}
+.speech-bubble.color-lisa .speech-tail { border-top-color: #d84a7e; border-bottom-color: #d84a7e; }
+
+.speech-bubble.color-maha {
+  background: #dff0e4;
+  color: #0a2a14;
+  box-shadow:
+    inset 0 0 0 2px #4a8a58,
+    inset 0 0 0 3px #a0d0a8,
+    0 0 0 2px var(--shadow),
+    0 8px 20px rgba(74, 138, 88, 0.4);
+}
+.speech-bubble.color-maha .speech-tail { border-top-color: #4a8a58; border-bottom-color: #4a8a58; }
+/* Anchor iy is the SPRITE TOP. Chibi sprites are 32 internal pixels tall,
+   which is ~96 CSS px at a 3x canvas upscale — bubbles need to clear that
+   whole block so the body isn't covered. */
+.speech-bubble.above {
+  /* Bubble's bottom sits 20px above the sprite's top (already the head). */
+  transform: translate(-50%, calc(-100% - 20px));
+}
+.speech-bubble.below {
+  /* Bubble's top sits well below the sprite's feet. */
+  transform: translate(-50%, 110px);
+}
+/* Thought bubbles float a hair further away. */
+.speech-bubble.thought.above {
+  transform: translate(-50%, calc(-100% - 28px));
+}
+.speech-bubble.thought.below {
+  transform: translate(-50%, 118px);
+}
+.speech-bubble.color-purple {
+  background: var(--purple-deep);
+  color: var(--paper);
+  box-shadow:
+    inset 0 0 0 2px var(--purple-bright),
+    inset 0 0 0 4px var(--purple),
+    0 0 0 3px var(--shadow),
+    0 6px 14px var(--purple-glow);
+}
+
+/* THOUGHT BUBBLE — same shape as a speech bubble, with slightly softer/rounder
+   corners and italics. Reserved for rare, crucial moments so it feels special. */
+.speech-bubble.thought {
+  border-radius: 22px 26px 24px 28px;
+  font-style: italic;
+  opacity: 0.92;
+}
+
+.speech-name {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--purple-deep);
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.speech-bubble.color-purple .speech-name {
+  color: var(--purple-bright);
+}
+
+.speech-text {
+  font-family: 'Press Start 2P', 'Pixelify Sans', system-ui, monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.speech-arrow {
+  position: absolute;
+  bottom: 2px;
+  right: 6px;
+  color: var(--purple);
+  font-size: 8px;
+  animation: blink 900ms steps(2, end) infinite;
+}
+
+.speech-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  align-items: stretch;
+}
+.speech-choices .wc-btn {
+  padding: 6px 10px;
+  font-size: 8px;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.speech-tail {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.speech-bubble.above .speech-tail {
+  bottom: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 11px solid var(--purple-deep);
+}
+.speech-bubble.below .speech-tail {
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 11px solid var(--purple-deep);
+}
+
+/* =========================================================================
+   PHONE — text-message overlay
+   ========================================================================= */
+
+.phone-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255, 140, 200, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(200, 130, 255, 0.35) 0%, transparent 60%),
+    linear-gradient(135deg, #2b0f3a 0%, #3a1430 40%, #4a1a3a 100%);
+  animation: fadeIn 300ms ease-out;
+  pointer-events: auto;
+  cursor: pointer;
+  overflow: hidden;
+}
+.phone-scene.fading {
+  animation: fadeOut 280ms ease-out forwards;
+}
+
+/* Floating background hearts — phone + every cutaway. */
+.phone-hearts,
+.cutaway-hearts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.phone-heart,
+.cutaway-heart {
+  position: absolute;
+  bottom: -40px;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 8px var(--purple-glow));
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  --sway: 20px;
+  --twist: 10deg;
+}
+.phone-heart { animation-name: heartFrolic; }
+
+/* Frolicking — slow balloon-deflating drift with side-to-side sway. */
+@keyframes heartFrolic {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.85) rotate(0deg);
+    opacity: 0;
+  }
+  12% { opacity: 0.85; }
+  25% {
+    transform: translate3d(var(--sway), -22vh, 0) scale(1.02) rotate(var(--twist));
+  }
+  50% {
+    transform: translate3d(calc(var(--sway) * -1), -50vh, 0) scale(1) rotate(calc(var(--twist) * -1));
+  }
+  75% {
+    transform: translate3d(calc(var(--sway) * 0.6), -78vh, 0) scale(0.96) rotate(var(--twist));
+  }
+  92% { opacity: 0.7; }
+  100% {
+    transform: translate3d(calc(var(--sway) * -0.4), -115vh, 0) scale(0.8) rotate(calc(var(--twist) * -0.5));
+    opacity: 0;
+  }
+}
+
+/* Gentler drift — mostly upward with tiny wiggle. */
+@keyframes heartDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.9) rotate(0deg);
+    opacity: 0;
+  }
+  15% { opacity: 0.85; }
+  40% {
+    transform: translate3d(calc(var(--sway) * 0.5), -40vh, 0) scale(1) rotate(calc(var(--twist) * 0.4));
+  }
+  70% {
+    transform: translate3d(calc(var(--sway) * -0.3), -75vh, 0) scale(0.96) rotate(calc(var(--twist) * -0.4));
+  }
+  100% {
+    transform: translate3d(var(--sway), -115vh, 0) scale(0.85) rotate(var(--twist));
+    opacity: 0;
+  }
+}
+
+/* Slow balloon deflate — dramatic scale-up, then crumple. */
+@keyframes heartDeflate {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.7) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.85; }
+  30% {
+    transform: translate3d(var(--sway), -18vh, 0) scale(1.15) rotate(calc(var(--twist) * 0.5));
+  }
+  55% {
+    transform: translate3d(calc(var(--sway) * -0.5), -45vh, 0) scale(1) rotate(calc(var(--twist) * -0.6));
+  }
+  78% {
+    transform: translate3d(var(--sway), -78vh, 0) scale(0.75) rotate(var(--twist));
+  }
+  100% {
+    transform: translate3d(calc(var(--sway) * -0.2), -115vh, 0) scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+.phone-body {
+  width: min(64%, 360px);
+  height: min(90%, 580px);
+  background: #0b0b10;
+  border: 3px solid var(--purple-deep);
+  border-radius: 32px;
+  box-shadow:
+    inset 0 0 0 2px var(--rose),
+    inset 0 0 0 5px var(--purple),
+    inset 0 0 0 8px var(--purple-deep),
+    0 0 0 3px var(--shadow),
+    0 12px 40px rgba(255, 158, 199, 0.35),
+    0 0 60px rgba(181, 132, 255, 0.45);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.phone-notch {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 12px;
+  background: #000;
+  border-radius: 0 0 10px 10px;
+  z-index: 2;
+}
+
+.phone-header {
+  flex: 0 0 auto;
+  padding: 26px 16px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(180deg, #1a1208 0%, #0b0b10 100%);
+  border-bottom: 2px solid var(--bronze);
+}
+.phone-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gold-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+.phone-contact {
+  color: var(--paper);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.phone-chat {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #12100c;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bronze) transparent;
+}
+
+.phone-bubble {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  animation: bubbleIn 280ms cubic-bezier(0.2, 0.9, 0.3, 1.25);
+}
+.phone-bubble.enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.phone-bubble.me {
+  justify-content: flex-end;
+}
+.phone-mini-avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gold-deep);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+.phone-bubble-inner {
+  max-width: 78%;
+  padding: 8px 11px 5px;
+  border-radius: 12px;
+  position: relative;
+}
+.phone-bubble.them .phone-bubble-inner {
+  background: #2a2422;
+  color: var(--paper);
+  border-bottom-left-radius: 4px;
+}
+.phone-bubble.me .phone-bubble-inner {
+  background: #4a6aff;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.phone-bubble-text {
+  font-size: 9px;
+  line-height: 1.8;
+  word-wrap: break-word;
+  text-shadow: none;
+}
+.phone-bubble-time {
+  font-size: 6px;
+  opacity: 0.55;
+  margin-top: 4px;
+}
+
+.phone-footer {
+  flex: 0 0 auto;
+  padding: 10px;
+  text-align: center;
+  background: #0b0b10;
+  border-top: 1px solid var(--bronze);
+}
+.phone-hint {
+  font-size: 8px;
+  color: var(--parchment-shadow);
+  letter-spacing: 1px;
+  opacity: 0.8;
+  animation: blink 1400ms ease-in-out infinite;
+}
+.phone-close {
+  margin-top: 2px;
+}
+
+@keyframes bubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================================
+   CREDITS
+   ========================================================================= */
+
+.credits-scene {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  overflow: hidden;
+  animation: fadeIn 500ms ease-out;
+  display: flex;
+  justify-content: center;
+}
+
+.credits-scroll {
+  width: min(80%, 480px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 0 20px;
+  text-align: center;
+  will-change: transform;
+}
+
+.credits-line {
+  font-size: 9px;
+  line-height: 1.8;
+  color: var(--paper);
+  letter-spacing: 1px;
+}
+.credits-line.heading {
+  color: var(--purple-bright);
+  font-size: 11px;
+  letter-spacing: 3px;
+  margin-top: 22px;
+  font-weight: 700;
+}
+
+.credits-spacer {
+  height: 240px;
+}
+.credits-spacer.small {
+  height: 30px;
+}
+
+.credits-final {
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-shadow:
+    2px 2px 0 var(--bronze),
+    4px 4px 0 var(--shadow);
+  line-height: 1.5;
+}
+
+/* =========================================================================
+   FADE TEXT  ("Later that night..." etc.)
+   ========================================================================= */
+
+.fade-text {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 480ms ease-out;
+  pointer-events: none;
+}
+.fade-text.show {
+  opacity: 1;
+}
+.fade-text-inner {
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  text-shadow:
+    2px 2px 0 var(--bronze),
+    4px 4px 0 var(--shadow);
+  font-style: normal;
+}
+
+/* =========================================================================
+   MUTE + AFFECTION (persistent HUD)
+   ========================================================================= */
+
+/* =========================================================================
+   DEV PANEL — chapter jumper for playtesting
+   ========================================================================= */
+
+.dev-panel {
+  position: absolute;
+  top: 64px;
+  right: 10px;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.dev-toggle {
+  width: 36px;
+  height: 36px;
+  background: var(--purple-deep);
+  border: 0;
+  color: var(--paper);
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 0 0 2px var(--purple),
+    0 0 0 2px var(--shadow);
+}
+
+.dev-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--ui-bg);
+  padding: 8px;
+  box-shadow:
+    inset 0 0 0 2px var(--purple-deep),
+    0 0 0 2px var(--shadow);
+  max-width: 220px;
+}
+
+.dev-chapter {
+  font-family: 'Press Start 2P', 'Pixelify Sans', system-ui, monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 8px 10px;
+  background: var(--gold-deep);
+  color: var(--paper);
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  text-shadow: 1px 1px 0 var(--shadow);
+  box-shadow: inset 0 0 0 1px var(--gold);
+  white-space: nowrap;
+}
+.dev-chapter:hover {
+  background: var(--purple);
+  color: var(--paper);
+}
+.dev-chapter.dev-reset {
+  background: var(--wine);
+}
+
+.mute-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  width: 46px;
+  height: 46px;
+  background: var(--ui-bg);
+  border: 0;
+  color: var(--paper);
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 12px;
+  box-shadow:
+    inset 0 0 0 2px var(--rose),
+    inset 0 0 0 4px var(--purple-deep),
+    0 0 0 2px var(--shadow),
+    0 0 12px var(--purple-glow);
+}
+
+.affection-counter {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+  padding: 10px 14px;
+  background: var(--ui-bg);
+  color: var(--paper);
+  font-size: 13px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow:
+    inset 0 0 0 2px var(--rose),
+    inset 0 0 0 4px var(--purple-deep),
+    0 0 0 2px var(--shadow),
+    0 0 14px var(--purple-glow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.affection-counter .heart {
+  color: var(--rose);
+  font-size: 16px;
+  text-shadow: 1px 1px 0 var(--shadow), 0 0 8px var(--purple-glow);
+}
+.affection-counter.pulse {
+  animation: heartPulse 500ms ease-out;
+}
+.affection-counter.pulse .heart {
+  animation: heartGlow 500ms ease-out;
+}
+@keyframes heartGlow {
+  0%, 100% { text-shadow: 1px 1px 0 var(--shadow); }
+  50% { text-shadow: 1px 1px 0 var(--shadow), 0 0 16px var(--purple-bright); }
+}
+
+/* =========================================================================
+   ANIMATIONS
+   ========================================================================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes heartPulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.18);
+    filter: brightness(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* =========================================================================
+   CARD PAGE — the framing device for every intro / outro.
+   A page of a handmade birthday card: pixel drawing in a frame, David's
+   handwritten note underneath, "turn the page" at the bottom. On accept the
+   drawing scales up to fill the viewport before the scene fades in.
+   ========================================================================= */
+
+.card-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at center, rgba(60, 30, 80, 0.25) 0%, rgba(20, 10, 30, 0.75) 100%);
+  overflow: hidden;
+  transition: opacity 0.7s ease;
+}
+.card-scene.fading {
+  opacity: 0;
+}
+.card-scene.turning {
+  /* Scene is already behind; dim backdrop lifts as the page flips away. */
+  background: transparent;
+  animation: cardSceneFade 0.6s ease forwards;
+}
+@keyframes cardSceneFade {
+  0%   { background: radial-gradient(ellipse at center, rgba(60, 30, 80, 0.25) 0%, rgba(20, 10, 30, 0.75) 100%); opacity: 1; }
+  100% { background: transparent; opacity: 0; }
+}
+
+/* Mid-story card pages — SAME size, gradient, and border as the title
+   card's inside face. Reuses .card-inside-* rules for note, border, and
+   button group. */
+.card-page-scene .birthday-card.opened-flat {
+  transform: none;
+  transition: opacity 260ms ease-out;
+}
+/* Next-page transition: simple cross-fade — the old page fades out while
+   the new page fades in on top. No flip, no rotation, no black frame. */
+.card-page-scene .birthday-card.opened-flat.turning {
+  opacity: 0;
+}
+/* The page itself — identical styling to .card-inside. */
+.card-page-scene .card-inside-plain {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 3px var(--shadow),
+    0 18px 50px rgba(181, 132, 255, 0.45);
+  background: linear-gradient(180deg, #fff3fb 0%, #fce2f5 60%, #f7d1eb 100%);
+  color: #3a1a3a;
+  padding: 32px 34px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* Final "Happy Birthday" page — same card shell, slightly bigger centered text. */
+.final-page-scene .final-note {
+  font-size: 17px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* =========================================================================
+   ACTION BUTTON (minigame: cigarette puff, shot, etc.)
+   ========================================================================= */
+
+.action-overlay {
+  position: absolute;
+  /* Sits near the TOP of the screen so it never hides what's happening
+     on the dance floor / couch / bar below. */
+  inset: 10% 0 auto 0;
+  display: flex;
+  justify-content: center;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.action-panel {
+  pointer-events: auto;
+  background: rgba(20, 12, 28, 0.88);
+  border: 2px solid var(--purple);
+  box-shadow:
+    inset 0 0 0 1px var(--purple-deep),
+    0 8px 26px rgba(0, 0, 0, 0.55);
+  padding: 14px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  color: var(--paper);
+  font-family: 'Press Start 2P', 'Pixelify Sans', system-ui, monospace;
+  min-width: 180px;
+}
+
+.action-countdown {
+  font-size: 28px;
+  color: #ffd060;
+  text-shadow: 2px 2px 0 #3a1810;
+}
+
+.action-sub {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+.action-btn {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 14px 28px;
+  background: linear-gradient(180deg, #c96bff 0%, #6e2aa8 100%);
+  border: 2px solid #4b1880;
+  color: #fff;
+  text-shadow: 1px 1px 0 #220033;
+  cursor: pointer;
+  box-shadow:
+    inset 0 -3px 0 #4b1880,
+    0 4px 0 #2a0e4a;
+  transition: transform 60ms ease;
+}
+.action-btn:hover {
+  filter: brightness(1.08);
+}
+.action-btn.pressed {
+  animation: actionPress 180ms ease;
+}
+@keyframes actionPress {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(2px) scale(0.97); filter: brightness(1.35); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.action-progress {
+  font-size: 10px;
+  color: #ffd060;
+}
+
+/* =========================================================================
+   SKIP-SCENE PILL
+   ========================================================================= */
+
+.skip-scene {
+  position: absolute;
+  top: 14px;
+  right: 60px;
+  z-index: 7;
+  font-family: 'Press Start 2P', 'Pixelify Sans', system-ui, monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  background: rgba(80, 40, 120, 0.8);
+  border: 2px solid var(--purple);
+  color: var(--paper);
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--purple-deep);
+}
+.skip-scene:hover {
+  background: rgba(120, 60, 170, 0.9);
+}
+
+/* =========================================================================
+   SMALL SCREENS
+   ========================================================================= */
+
+@media (max-width: 480px) {
+  .title-main {
+    font-size: 28px;
+  }
+  .title-sub {
+    font-size: 9px;
+  }
+  .parchment-title {
+    font-size: 13px;
+  }
+  .parchment-body {
+    font-size: 8px;
+  }
+  .dialogue-text {
+    font-size: 9px;
+  }
+  .dialogue-portrait canvas {
+    width: 64px;
+    height: 64px;
+  }
+}

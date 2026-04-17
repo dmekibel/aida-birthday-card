@@ -1,0 +1,19 @@
+{
+  "name": "aida-tides-of-affection",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AIDA II: Tides of Affection — a Warcraft 2-styled interactive story as a birthday gift for Aida.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  },
+  "dependencies": {
+    "@fontsource/press-start-2p": "^5.1.0",
+    "@fontsource/pixelify-sans": "^5.1.0"
+  }
+}

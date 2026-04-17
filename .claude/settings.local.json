@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(wc -l /Users/Dmekibel/claudeCode/aida/src/*.js)",
+      "WebFetch(domain:docs.google.com)",
+      "WebFetch(domain:doc-00-4g-docstext.googleusercontent.com)"
+    ]
+  }
+}
