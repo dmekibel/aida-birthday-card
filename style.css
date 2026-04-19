@@ -368,6 +368,15 @@ body {
 .card-inside-note p {
   margin-bottom: 10px;
 }
+.card-inside-note p.card-hint {
+  font-size: 11px;
+  opacity: 0.7;
+  font-style: italic;
+  text-align: center;
+  margin-top: 14px;
+  color: var(--purple-deep);
+  letter-spacing: 0.5px;
+}
 .card-inside-actions {
   display: flex;
   flex-direction: column;

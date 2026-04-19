@@ -138,6 +138,7 @@ const DEFAULT_NOTE = `
 you I feel warm and happy. You are my sunshine.</p>
 <p>Meeting you was the best thing that ever happened to me!</p>
 <p>And it was a magical time&hellip;</p>
+<p class="card-hint">tip &mdash; press <b>spacebar</b> (or click) to turn every page &amp; advance dialogue.</p>
 `;
 
 // ---------------------------------------------------------------------------

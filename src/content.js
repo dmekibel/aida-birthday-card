@@ -775,7 +775,7 @@ const mission2 = {
       waypoints: []
     };
   },
-  async play({ mission, dialogue, phone, setAffection, sfx, delay, fadeTo, snapFade, actionButton, fadeText, spawnHeart }) {
+  async play({ mission, dialogue, phone, setAffection, sfx, delay, fadeTo, snapFade, actionButton, fadeText, spawnHeart, setCameraZoom, setCameraTarget }) {
     await delay(400);
     await dialogue({
       name: 'Aida',
@@ -810,17 +810,17 @@ const mission2 = {
     });
 
     // --- COUNTDOWN ---
-    await delay(260);
     await dialogue({
-      name: 'Aida',
+      name: 'David',
       text: '(The clock on the wall reads 23:59:50. Everyone turns.)'
     });
+    // Snappy countdown — one second per number would be realistic but slow,
+    // so tighten to ~350 ms to keep it tight.
     for (const n of [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]) {
-      await fadeText(String(n), { duration: 520 });
+      await fadeText(String(n), { duration: 350 });
     }
-    await fadeText('3\u2026 2\u2026 1\u2026!!', { duration: 900 });
-    await fadeText('\uD83C\uDF89  HAPPY NEW YEAR  \uD83C\uDF89', { duration: 1400 });
-    await fadeText('new year, new love', { duration: 1800 });
+    await fadeText('\uD83C\uDF89  HAPPY NEW YEAR  \uD83C\uDF89', { duration: 1200 });
+    await fadeText('new year, new love', { duration: 1400 });
     sfx.chime();
     // Firework notes bloom around the dance floor.
     for (let i = 0; i < 10; i++) {
@@ -832,13 +832,13 @@ const mission2 = {
     await delay(900);
 
     // --- AIDA DISAPPEARS; DAVID WANDERS ---
-    await dialogue({
-      name: 'Aida',
-      text: '(You slip into the crowd.)'
-    });
-    // Aida walks off toward the bottom corner of the dance floor, out of sight.
+    // Aida walks silently off to the bottom-left corner FIRST. Camera zooms
+    // in on David so Aida is already out of frame by the time he thinks
+    // "where did she go?".
     await mission.moveHeroTo?.(5, 13);
-    await delay(300);
+    setCameraZoom(1.7);
+    setCameraTarget(mission.npcs.get('david'));
+    await delay(500);
     await dialogue({
       name: 'David',
       thought: true,
@@ -865,6 +865,9 @@ const mission2 = {
       name: 'David',
       text: '(I ordered a cab because I was starting to feel nauseous. But I was super sad that I lost you.)'
     });
+    // Reset camera before the fade + phone overlay.
+    setCameraZoom(1.0);
+    setCameraTarget(null);
     setAffection(1);
     sfx.heart();
 
@@ -965,7 +968,7 @@ const mission3 = {
     await delay(220);
     const askIdx = await dialogue({
       name: 'Aida',
-      text: 'My turn. Ask me something, or I\u2019ll ask you.',
+      text: '\u2026',
       choices: [
         "What's your favourite movie?",
         "What's your favourite game?",
