@@ -111,15 +111,22 @@ export function initEngine(canvas) {
 }
 
 function attachInput() {
+  // Map a click in CSS canvas coords to WORLD coords (offscreen 320×240).
+  // This MUST account for the current camera crop — the main canvas shows
+  // the region (cameraX, cameraY) → (+viewW, +viewH) stretched to fill.
+  // Previously we mapped 1:1 into the internal 320×240 space and got
+  // wrong tiles whenever cameraZoom > 1.0 (e.g. the boss fight's 1.6x).
   const toInternal = (clientX, clientY) => {
     const rect = mainCanvas.getBoundingClientRect();
-    const localX = (clientX - rect.left) * (mainCanvas.width / rect.width);
-    const localY = (clientY - rect.top) * (mainCanvas.height / rect.height);
-    const sx = mainCanvas.width / INTERNAL_W;
-    const sy = mainCanvas.height / INTERNAL_H;
+    const cssX = clientX - rect.left;
+    const cssY = clientY - rect.top;
+    const viewW = INTERNAL_W / cameraZoom;
+    const viewH = INTERNAL_H / cameraZoom;
+    const worldX = cameraX + (cssX / rect.width) * viewW;
+    const worldY = cameraY + (cssY / rect.height) * viewH;
     return {
-      x: Math.floor(localX / sx),
-      y: Math.floor(localY / sy)
+      x: Math.floor(worldX),
+      y: Math.floor(worldY)
     };
   };
 

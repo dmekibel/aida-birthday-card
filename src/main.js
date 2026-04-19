@@ -554,11 +554,15 @@ function createMission(data) {
       if (isUiBlocking()) return;
       const gx = Math.floor(x / TILE);
       const gy = Math.floor(y / TILE);
-      // If clicking on an NPC with a registered handler, and hero is adjacent,
-      // fire the handler instead of moving. For TALL sprites (> 1 tile high)
-      // the click can land on any tile the sprite visually covers — e.g. the
-      // big-boss monster is 32×48 so clicking its head works even though the
-      // tile coord is at its feet.
+      // If clicking on an NPC with a registered handler, FIRE THE HANDLER —
+      // don't fall back to walk-to-tile. This is important for the boss
+      // fight: clicking the monster should always register as an attack,
+      // never make Aida try to walk to the monster's tile (which is blocked
+      // anyway). The handler itself decides whether the click is a valid
+      // strike (e.g. in-range or not).
+      //
+      // Hitbox: sprite-accurate — tall sprites count every row they cover,
+      // wide sprites count gx-1 / gx / gx+1.
       for (const [id, npc] of npcs) {
         const handler = npcClickHandlers.get(id);
         if (!handler) continue;
@@ -566,20 +570,14 @@ function createMission(data) {
           sprites[`${npc.sprite}.${npc.facing}`] ??
           sprites[`${npc.sprite}.down`];
         const tilesTall = spr ? Math.max(1, Math.ceil(spr.height / TILE)) : 1;
-        // Any sprite wider than one tile overhangs into the adjacent column
-        // — accept clicks on gx-1, gx, gx+1 so a chunky boss never misses.
         const wide = spr && spr.width > TILE;
         const wPad = wide ? 1 : 0;
         const inCol = gx >= npc.gx - wPad && gx <= npc.gx + wPad;
-        // Sprite extends UPWARD from its feet, so accept clicks on gy .. gy-(tilesTall-1).
         const inRow = gy >= npc.gy - (tilesTall - 1) && gy <= npc.gy;
         if (!(inCol && inRow)) continue;
-        const dist = Math.abs(npc.gx - hero.gx) + Math.abs(npc.gy - hero.gy);
-        if (dist <= 1) {
-          playClick();
-          handler(npc);
-          return;
-        }
+        playClick();
+        handler(npc);
+        return;
       }
       playClick();
       moveHeroTo(gx, gy);
