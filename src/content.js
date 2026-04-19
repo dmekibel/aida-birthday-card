@@ -1210,12 +1210,32 @@ const mission4 = {
     })();
     await delay(300);
 
-    // David follows a tile behind her as she walks to the pharmacy.
-    const follow = setInterval(() => {
-      if (!mission.npcs.get('paladin')) { clearInterval(follow); return; }
+    // --- David follows Aida. ---
+    // Every 400 ms, if David isn't already next to her and isn't already
+    // walking, steer him toward the adjacent-to-Aida tile that's closest
+    // to his current position. Works in every direction — left, right,
+    // forward, back — as Aida changes course.
+    const followAida = () => {
+      const p = mission.npcs.get('paladin');
+      if (!p) return;
+      if (p.path.length > 0) return; // already walking to a target
       const h = mission.hero;
-      mission.moveNpcTo('paladin', Math.max(0, h.gx - 1), h.gy);
-    }, 900);
+      const dist = Math.abs(p.gx - h.gx) + Math.abs(p.gy - h.gy);
+      if (dist <= 1) return; // already beside her
+      const candidates = [
+        [h.gx - 1, h.gy], [h.gx + 1, h.gy],
+        [h.gx,     h.gy - 1], [h.gx, h.gy + 1]
+      ].sort((a, b) => {
+        const da = Math.abs(a[0] - p.gx) + Math.abs(a[1] - p.gy);
+        const db = Math.abs(b[0] - p.gx) + Math.abs(b[1] - p.gy);
+        return da - db;
+      });
+      for (const [x, y] of candidates) {
+        mission.moveNpcTo('paladin', x, y);
+        if (p.path.length > 0) break;
+      }
+    };
+    const follow = setInterval(followAida, 400);
 
     // --- Walk to the pharmacy. Hint points at the door. ---
     mission.setHint(18, 4);
@@ -1224,17 +1244,11 @@ const mission4 = {
 
     await dialogue({ name: 'David', text: "Oh no, it's closed." });
 
-    // --- WALK BACK — the long way home. ---
-    clearInterval(follow);
-    const followBack = setInterval(() => {
-      if (!mission.npcs.get('paladin')) { clearInterval(followBack); return; }
-      const h = mission.hero;
-      mission.moveNpcTo('paladin', Math.min(19, h.gx + 1), h.gy);
-    }, 900);
+    // --- WALK BACK — same follower keeps running, it doesn't care which way. ---
     mission.setHint(2, 7);
     await mission.waitForWaypoint('back-home');
     mission.clearHint();
-    clearInterval(followBack);
+    clearInterval(follow);
 
     // The hand-on-neck moment, as David remembers it.
     await dialogue({
