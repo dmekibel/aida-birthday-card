@@ -557,6 +557,15 @@ function createMission(data) {
       drawMap(ctx);
       drawTargetMark(ctx);
       drawHearts(ctx);
+      // Helper for z-sort: taller sprites should always draw ON TOP so a
+      // shorter character (Aida, 32x32) can never cover a much taller one
+      // (bigmon, 32x48) even if they happen to overlap tile rows.
+      const spriteHeight = (ent) => {
+        const spr =
+          sprites[`${ent.sprite}.${ent.facing}`] ??
+          sprites[`${ent.sprite}.down`];
+        return spr ? spr.height : TILE;
+      };
       // Fire tiles — glowing scorch rectangle under the particles.
       for (const f of fireTiles.values()) {
         const a = Math.min(1, f.life / f.maxLife);
@@ -567,10 +576,20 @@ function createMission(data) {
         ctx.fillStyle = `rgba(255, 230, 120, ${0.4 * a})`;
         ctx.fillRect(f.gx * TILE + 6, f.gy * TILE + 9, TILE - 12, TILE - 13);
       }
-      // Sort every character by on-screen Y (px) so the one whose feet are
-      // further down is drawn LAST → their head is never covered by someone
-      // behind them. Fixes "standing on his head" overlap for tall sprites.
-      const ordered = [hero, ...npcs.values()].sort((a, b) => a.py - b.py);
+      // Sort every character by on-screen Y so the one whose feet are
+      // further down is drawn LAST (their head isn't covered by someone
+      // behind them). Exception: any sprite that's taller than a standard
+      // 32-px chibi (e.g. the 48-px bigmon boss) is pushed to the very end
+      // of the order so a shorter sprite can never cover them.
+      const ordered = [hero, ...npcs.values()].sort((a, b) => {
+        const ha = spriteHeight(a);
+        const hb = spriteHeight(b);
+        const aTall = ha > 32;
+        const bTall = hb > 32;
+        if (aTall && !bTall) return 1;
+        if (bTall && !aTall) return -1;
+        return a.py - b.py;
+      });
       for (const ent of ordered) {
         drawEntity(ctx, ent, ent === hero);
       }
