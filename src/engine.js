@@ -625,23 +625,70 @@ function drawLampGlow(ctx, t) {
   ctx.restore();
 }
 
-// Disco lights — calm, cute. Two soft pastel spots drifting slowly.
+// Disco lights — moody Mo Bar vibe: dim the whole room, then throw 6
+// rainbow-coloured spotlights drifting slowly across the floor from a
+// spinning disco ball up above. Plus a tiny sparkle of the ball itself.
 function drawDiscoLights(ctx, t) {
+  // Darken the room first — takes the scene from neutral to moody.
+  ctx.save();
+  ctx.fillStyle = 'rgba(4, 2, 10, 0.48)';
+  ctx.fillRect(0, 0, INTERNAL_W, INTERNAL_H);
+  ctx.restore();
+
+  // Six rainbow-coloured spotlights, each drifting on its own Lissajous path.
   const lights = [
-    { hue: 310, freq: 0.18, phase: 0,               radius: 90 }, // soft pink
-    { hue: 260, freq: 0.14, phase: Math.PI * 1.0,   radius: 85 }  // lavender
+    { hue: 340, freq: 0.22, phase: 0,                 r: 72 }, // hot pink
+    { hue: 285, freq: 0.18, phase: Math.PI * 0.35,    r: 68 }, // violet
+    { hue: 210, freq: 0.26, phase: Math.PI * 0.78,    r: 70 }, // electric blue
+    { hue: 180, freq: 0.20, phase: Math.PI * 1.15,    r: 64 }, // cyan
+    { hue:  55, freq: 0.24, phase: Math.PI * 1.50,    r: 60 }, // gold
+    { hue:  10, freq: 0.19, phase: Math.PI * 1.85,    r: 66 }  // red-orange
   ];
   ctx.save();
   ctx.globalCompositeOperation = 'screen';
   for (const L of lights) {
-    const x = Math.floor(INTERNAL_W / 2 + Math.sin(t * L.freq + L.phase) * 90);
-    const y = Math.floor(INTERNAL_H / 2 + Math.cos(t * L.freq * 0.8 + L.phase) * 55);
-    const grad = ctx.createRadialGradient(x, y, 0, x, y, L.radius);
-    grad.addColorStop(0, `hsla(${L.hue}, 78%, 72%, 0.34)`);
-    grad.addColorStop(0.55, `hsla(${L.hue}, 78%, 72%, 0.12)`);
-    grad.addColorStop(1, `hsla(${L.hue}, 78%, 72%, 0)`);
+    const x = Math.floor(
+      INTERNAL_W / 2 + Math.sin(t * L.freq + L.phase) * 110
+    );
+    const y = Math.floor(
+      INTERNAL_H / 2 + Math.cos(t * L.freq * 0.85 + L.phase) * 70
+    );
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, L.r);
+    grad.addColorStop(0,    `hsla(${L.hue}, 92%, 62%, 0.55)`);
+    grad.addColorStop(0.55, `hsla(${L.hue}, 92%, 62%, 0.18)`);
+    grad.addColorStop(1,    `hsla(${L.hue}, 92%, 62%, 0)`);
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, INTERNAL_W, INTERNAL_H);
+  }
+  ctx.restore();
+
+  // Ceiling disco ball — spinning reflective silver sphere with twinkle dots.
+  const bx = INTERNAL_W / 2;
+  const by = 12;
+  const r  = 9;
+  ctx.save();
+  // Dark support rod.
+  ctx.fillStyle = '#18181f';
+  ctx.fillRect(Math.floor(bx) - 1, 0, 2, 4);
+  // Ball body.
+  const grad = ctx.createRadialGradient(bx - 2, by - 2, 0, bx, by, r);
+  grad.addColorStop(0,   '#eef0f8');
+  grad.addColorStop(0.6, '#7c8098');
+  grad.addColorStop(1,   '#2a2d3c');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(bx, by, r, 0, Math.PI * 2);
+  ctx.fill();
+  // Twinkling reflective facets — cycle through rainbow as the ball spins.
+  ctx.globalCompositeOperation = 'screen';
+  const facets = 10;
+  for (let i = 0; i < facets; i++) {
+    const a = (t * 2 + i * (Math.PI * 2 / facets)) % (Math.PI * 2);
+    const fx = bx + Math.cos(a) * (r - 2);
+    const fy = by + Math.sin(a) * (r - 2) * 0.7;
+    const hue = (i * 36 + Math.floor(t * 80)) % 360;
+    ctx.fillStyle = `hsla(${hue}, 95%, 72%, 0.95)`;
+    ctx.fillRect(Math.floor(fx) - 1, Math.floor(fy) - 1, 2, 2);
   }
   ctx.restore();
 }
