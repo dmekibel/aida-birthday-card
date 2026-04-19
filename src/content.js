@@ -1902,35 +1902,45 @@ const mission10Knock = {
     mission.setHint(1, 8);
     await mission.waitForWaypoint('door');
     mission.clearHint();
+    mission.setHeroFacing('left'); // Aida turns to face the door.
 
-    // Open the door — Lisa is there. At first, she looks normal.
+    // Open the door — Liza is there. She enters through the archway tile
+    // at (0, 8) so she's visibly to the LEFT of Aida, never stacked on her.
     sfx.chime();
-    // Spawn Lisa directly inside the room (was out of bounds at -1 before,
-    // which broke pathfinding so she couldn\u2019t walk). She takes several
-    // steps into the room BEFORE transforming — first as Lisa.
     mission.addNpc({
       id: 'lisa',
-      x: 1, y: 8,
+      x: 0, y: 8,
       sprite: 'lisa',
       facing: 'right',
       name: 'Liza'
     });
     await delay(250);
-    // She walks a few tiles in — still as Lisa.
+
+    // Aida backs up one tile (to (2, 8)) so Liza has a clear path PAST her
+    // and can reach the centre of the room for the transformation.
+    if (mission.hero) {
+      mission.hero.gx = 2; mission.hero.gy = 8;
+      mission.hero.x = 2;  mission.hero.y = 8;
+      mission.hero.px = 2 * 16; mission.hero.py = 8 * 16;
+      mission.hero.path = [];
+      mission.setHeroFacing('left');
+    }
+    await delay(150);
+
+    // Liza walks a few tiles INTO the room (past Aida's position).
     await mission.moveNpcTo('lisa', 4, 8);
 
     await dialogue({
-      portrait: 'lisa',
       name: 'Liza',
       text: "Guys\u2026 I came from the club\u2026 something\u2019s wrong\u2026"
     });
     await dialogue({
-      portrait: 'aida',
       name: 'Aida',
+      thought: true,
       text: "(Her skin. Her eyes. She\u2019s not right.)"
     });
     await delay(260);
-    // She stumbles a couple more tiles closer — then stops.
+    // She stumbles a couple more tiles closer — then stops for the change.
     await mission.moveNpcTo('lisa', 5, 8);
     await dialogue({
       portrait: 'lisa',
