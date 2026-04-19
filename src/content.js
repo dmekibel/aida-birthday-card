@@ -453,9 +453,9 @@ const mission1 = {
   when: 'December 2024',
   title: 'A Goth on the Stairs',
   briefing:
-    "I remember the first time I saw you.\n\nLisa's mother's birthday. A back room at Balagan \u2014 cigarettes, perfume, music through the ceiling. You were sitting on the couch like you didn't want to be seen.\n\nI walked in and said the worst line of my life.\n\nYou laughed anyway.",
+    "I remember the first time I saw you.\n\nI felt something straight away.\n\nI thought you were the most beautiful girl in the world.\n\nMagic was in the air\u2026",
   outro:
-    "(You were laughing before you could stop yourself. I saw it.)\n\nI didn't know what you were then. I only knew I wasn't going to forget your face.",
+    "Meeting you felt like destiny, almost as if we already knew each other.\n\nI will never forget how beautiful you were that day.",
   audioLoop: 'club',
   audioOpts: { muffled: true },
   buildScene() {
@@ -488,7 +488,7 @@ const mission1 = {
       heroSprite: 'aida1',
       npcs: [
         // Lisa waits near the door, pouring drinks.
-        { id: 'lisa',   x: 5,  y: 12, sprite: 'lisa',   facing: 'up',    name: 'Lisa' },
+        { id: 'lisa',   x: 5,  y: 12, sprite: 'lisa',   facing: 'up',    name: 'Liza' },
         // Maha on the chair by the ashtray (upper right).
         { id: 'maha',   x: 13, y: 6,  sprite: 'maha',   facing: 'left',  name: 'Maha' },
         // An employee smoking near the other ashtray.
@@ -516,15 +516,10 @@ const mission1 = {
 
     await delay(400);
     // Aida, on the couch, half-watching the room.
-    await dialogue({ name: 'Aida', text: '(Music through the ceiling.)' });
-    await dialogue({ name: 'Aida', text: "(Lisa's mom's birthday.)" });
-    await dialogue({ name: 'Aida', text: "(You're already here.)" });
+    await dialogue({ name: 'Aida', text: '(Tonight is so boring\u2026)' });
+    await dialogue({ name: 'Aida', text: '(At least I have my cigarette.)' });
 
     // --- PUFF MINIGAME — settle the nerves with a couple of drags. ---
-    await dialogue({
-      name: 'Aida',
-      text: '(Light one. Just a couple of pulls.)'
-    });
     const puffs = await actionButton({
       label: '\uD83D\uDEAC Puff',
       subtitle: 'Three drags and it\u2019s done.',
@@ -546,22 +541,25 @@ const mission1 = {
     await mission.moveNpcTo('david', 10, 12);
     await delay(300);
 
-    // Lisa runs up to hug him — stops to his LEFT.
+    // Liza runs up to hug him — stops to his LEFT.
     await mission.moveNpcTo('lisa', 8, 12);
     mission.setNpcFacing?.('lisa', 'right');
     mission.setNpcFacing?.('david', 'left');
     await delay(220);
     sfx.chime();
-    await dialogue({ name: 'Lisa', text: 'DAVID! You made it.' });
-    await dialogue({ name: 'David', text: '(He hugs her. She hugs him harder.)' });
-
-    // Lisa announces him to the room.
+    await dialogue({ name: 'Liza', text: 'DAVID! You made it.' });
     await dialogue({
-      name: 'Lisa',
-      text: 'Everyone \u2014 this is my favourite person in the world.'
+      name: 'David',
+      text: '(Liza was hugging me but I was looking at you.)'
     });
-    await dialogue({ name: 'David', text: 'She says that to everyone.' });
-    await dialogue({ name: 'Lisa', text: "I don't. Just you." });
+
+    // Liza announces him to the room.
+    await dialogue({
+      name: 'Liza',
+      text: 'Everyone, this is my favourite person in the world.'
+    });
+    await dialogue({ name: 'David', text: 'Hey guys, nice to meet you.' });
+    await dialogue({ name: 'Liza', text: "I can't believe you are here!" });
 
     // --- THE FIRST LOOK (spotlight moment) ---
     // World goes dark. Music stops. Two spotlights on Aida + David.
@@ -583,7 +581,7 @@ const mission1 = {
     await dialogue({
       name: 'Aida',
       thought: true,
-      text: '(Oh. The most beautiful person.)'
+      text: '(Omg this guy is the most beautiful person in the world.)'
     });
     // David — stunned, eyes wide.
     spawnExclaim(davidNpc.px + 8, davidNpc.py - 8);
@@ -591,7 +589,7 @@ const mission1 = {
     await dialogue({
       name: 'David',
       thought: true,
-      text: '(\u2026 wow. Who is she?)'
+      text: '(Wow. Shock. Who is she?!)'
     });
     // Hearts at the end of the moment.
     for (let i = 0; i < 10; i++) {
@@ -617,29 +615,24 @@ const mission1 = {
     await delay(300);
     await dialogue({
       name: 'David',
-      text: 'Maha, right? Is that short for Rasomaha? Like the Wolverine?'
+      text: "Hi, what's your name?"
     });
-    await dialogue({
-      name: 'Maha',
-      text: "No one's ever asked me that."
-    });
+    await dialogue({ name: 'Maha', text: 'Maha.' });
     await dialogue({
       name: 'David',
-      text: "It was on the tip of my tongue since I walked in."
+      text: 'Is that short for Rasamaha?'
     });
+    await dialogue({ name: 'Aida', text: 'Hahaha.' });
 
-    // Lisa heckles from across the room.
+    // Liza heckles from across the room.
     await delay(300);
     await dialogue({
-      name: 'Lisa',
-      text: 'By the way \u2014 David was too greedy to buy me a COOKIE in Israel.'
+      name: 'Liza',
+      text: 'By the way, David was too greedy to buy me a COOKIE in Israel.'
     });
-    await dialogue({ name: 'David', text: 'It was a small cookie!' });
-    await dialogue({ name: 'Lisa', text: 'It was NOT.' });
-    await dialogue({
-      name: 'Maha',
-      text: 'Knew it. Figured.'
-    });
+    await dialogue({ name: 'David', text: "It's not true." });
+    await dialogue({ name: 'Liza', text: 'David is not like Russian me.' });
+    await dialogue({ name: 'Maha', text: 'Knew it.' });
 
     // --- DAVID WALKS OVER AND SITS BESIDE AIDA ON THE COUCH ---
     // Step 1: walk to the floor in front of the couch. Step 2: sit down —
@@ -654,28 +647,28 @@ const mission1 = {
     mission.setNpcSprite('david', 'pal1');
     await delay(260);
 
-    await dialogue({ name: '???', text: '\u2026' });
+    // David, narrating: the first-look impression.
+    await dialogue({
+      name: 'David',
+      text: '(I thought you were super cool, super beautiful, and super fashionable.)'
+    });
     await dialogue({ name: 'David', text: 'Are you a goth?' });
 
     const reply = await dialogue({
       name: 'Aida',
-      text: 'What did you just say to me?',
+      text: '\u2026',
       choices: [
-        'Are you serious?',
-        'Unbelievable. Hi.',
-        'Do I look like a goth to you?'
+        'Yes. (play it cool)',
+        'Hahaha yes.',
+        "No, I'm just cool."
       ]
     });
     const heLine = [
-      "I mean \u2014 the dress. Sorry. I'm bad at this.",
-      "Hi. I'm \u2014 yeah, I'm bad at this.",
-      "Honestly? A little. In the best way."
-    ][reply] || "I'm bad at this.";
+      'You look cool.',
+      'You look cool.',
+      'Wow. True.'
+    ][reply] || 'You look cool.';
     await dialogue({ name: 'David', text: heLine });
-    await dialogue({
-      name: 'Aida',
-      text: '(You laugh. Not at him \u2014 almost with him.)'
-    });
 
     // --- MAHA COMES OVER AND RUNS INTERFERENCE ---
     await delay(300);
@@ -683,56 +676,34 @@ const mission1 = {
     await delay(260);
     await dialogue({
       name: 'Maha',
-      text: 'So, David. What do you do for a living?'
+      text: 'So, David. What do you do?'
     });
     await dialogue({
       name: 'David',
-      text: 'A bit of everything. Some product, some code, some art.'
+      text: 'I make art.'
     });
     await dialogue({
       name: 'Maha',
-      text: 'Hmm. Won\u2019t work for us.'
+      text: 'Hmm. That won\u2019t work for us.'
     });
-    await dialogue({ name: 'Aida', text: '(Maha. Do NOT.)' });
-    await dialogue({
-      name: 'Maha',
-      text: 'Are you close with your mother?'
-    });
-    await dialogue({ name: 'David', text: 'Yeah. Very.' });
-    await dialogue({
-      name: 'Maha',
-      text: 'Hmm. Won\u2019t work for us.'
-    });
-    await dialogue({ name: 'Aida', text: '(MAHA. I will end you.)' });
-    await dialogue({
-      name: 'Maha',
-      text: 'Last one. If you met a girl tonight \u2014 goth or otherwise \u2014 what would you do?'
-    });
-    await dialogue({
-      name: 'David',
-      text: "I... don't know. Figure it out?"
-    });
-    // This time Maha flips it — the answer passes.
-    await dialogue({
-      name: 'Maha',
-      text: 'Hmm. \u2014 That WILL work for us.'
-    });
-    await dialogue({
-      name: 'David',
-      text: "Wait \u2014 what changed?"
-    });
-    await dialogue({
-      name: 'Maha',
-      text: 'Nothing. Never mind.'
-    });
-    // Aida's thought — she caught Maha catching her blush.
     await dialogue({
       name: 'Aida',
-      text: '(He saw me blush. That\u2019s how he knew.)'
+      text: "(Maha, stop! You're embarrassing me!)"
     });
 
     // Maha strolls back to his chair.
     mission.moveNpcTo('maha', 13, 6);
+    await delay(300);
+
+    // --- THE NAME EXCHANGE ---
+    await dialogue({ name: 'David', text: "What's your name?" });
+    await dialogue({ name: 'Aida',  text: 'Aida.' });
+    await dialogue({
+      name: 'David',
+      text: '(The most beautiful name of the most beautiful girl.)'
+    });
+    await dialogue({ name: 'Aida',  text: 'And yours?' });
+    await dialogue({ name: 'David', text: 'David.' });
 
     setAffection(1);
     sfx.heart();
@@ -751,9 +722,9 @@ const mission2 = {
   when: "New Year's Eve, 2024",
   title: 'Silver Pants',
   briefing:
-    "A few nights later \u2014 the same club, a different room.\n\nI wore silver pants. You pretended this was normal. We didn't say a word to each other.\n\nI thought about you the whole countdown.",
+    "I was more excited about seeing you again than I was about New Year's.\n\nI put on my best silver pants and Ozzy Osbourne shirt, hoping there was a chance I'd get my New Year's kiss from my new favourite goth\u2026",
   outro:
-    "(I drank too much and lost you in the crowd.)\n\nI wrote to you from the taxi home. You wrote back at one in the afternoon, already awake. I read it twice.",
+    "It was sad going to bed, not knowing where you went. I was sad I wasn't able to at least say bye.\n\nBut at least I dreamed of you that night.",
   audioLoop: 'nightclub',
   effects: ['disco'],
   buildScene() {
@@ -790,7 +761,7 @@ const mission2 = {
         // David dances next to her, silver pants catching every laser.
         { id: 'david',  x: 8,  y: 8,  sprite: 'palNYE', facing: 'left',  name: 'David' },
         // Lisa by the left tables.
-        { id: 'lisa',   x: 4,  y: 6,  sprite: 'lisa',   facing: 'left',  name: 'Lisa' },
+        { id: 'lisa',   x: 4,  y: 6,  sprite: 'lisa',   facing: 'left',  name: 'Liza' },
         // Maha at the bottom table.
         { id: 'maha',   x: 9,  y: 13, sprite: 'maha',   facing: 'up',    name: 'Maha' },
         // A handful of strangers scattered in the dance floor.
@@ -807,26 +778,18 @@ const mission2 = {
   async play({ mission, dialogue, phone, setAffection, sfx, delay, fadeTo, snapFade, actionButton, fadeText, spawnHeart }) {
     await delay(400);
     await dialogue({
-      portrait: 'aida',
       name: 'Aida',
-      text: "(New Year\u2019s at Balagan. The room is all elbows and laser.)"
+      text: "(I can't believe it's already New Year's.)"
     });
     await dialogue({
-      portrait: 'paladin',
       name: 'David',
-      text: "(In SILVER pants. Actual silver pants \u2014 catching every laser in the room.)"
-    });
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: "(Neither of you is talking. Neither of you needs to.)"
+      text: '(I was so happy to see you that day. Every moment seeing you felt like time would slow down.)'
     });
 
     // --- SHOTS MINIGAME — tap the glass a few times before midnight ---
     await dialogue({
-      portrait: 'lisa',
-      name: 'Lisa',
-      text: 'Shots before the countdown. Everyone!'
+      name: 'Liza',
+      text: 'Ros\u00e9 chacha shots before the countdown! Everyone!'
     });
     const shots = await actionButton({
       label: '\uD83E\uDD43 Shot',
@@ -842,22 +805,22 @@ const mission2 = {
     }
     sfx.heart();
     await dialogue({
-      portrait: 'paladin',
       name: 'David',
-      text: "(He clinks his glass against yours. You down them together.)"
+      text: '(He clinks his glass against yours. You down them together.)'
     });
 
     // --- COUNTDOWN ---
     await delay(260);
     await dialogue({
-      portrait: 'aida',
       name: 'Aida',
       text: '(The clock on the wall reads 23:59:50. Everyone turns.)'
     });
     for (const n of [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]) {
       await fadeText(String(n), { duration: 520 });
     }
-    await fadeText('\uD83C\uDF89  HAPPY NEW YEAR  \uD83C\uDF89', { duration: 1600 });
+    await fadeText('3\u2026 2\u2026 1\u2026!!', { duration: 900 });
+    await fadeText('\uD83C\uDF89  HAPPY NEW YEAR  \uD83C\uDF89', { duration: 1400 });
+    await fadeText('new year, new love', { duration: 1800 });
     sfx.chime();
     // Firework notes bloom around the dance floor.
     for (let i = 0; i < 10; i++) {
@@ -868,18 +831,39 @@ const mission2 = {
     }
     await delay(900);
 
-    // He drifts into the crowd and disappears.
+    // --- AIDA DISAPPEARS; DAVID WANDERS ---
     await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: "(A song shifts. He raises his glass \u2014 then he\u2019s gone.)"
+      name: 'Aida',
+      text: '(You slip into the crowd.)'
     });
-    await mission.moveNpcTo('david', 1, 14);
+    // Aida walks off toward the bottom corner of the dance floor, out of sight.
+    await mission.moveHeroTo?.(5, 13);
+    await delay(300);
+    await dialogue({
+      name: 'David',
+      thought: true,
+      text: '(I wonder where Aida went.)'
+    });
+    // David paces around the dance floor looking for her.
+    await mission.moveNpcTo('david', 12, 8);
+    await delay(180);
+    await mission.moveNpcTo('david', 6, 10);
+    await delay(180);
+    await mission.moveNpcTo('david', 10, 4);
     await delay(200);
     await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: "(You look for him. The crowd closes. You let it.)"
+      name: 'David',
+      thought: true,
+      text: "(Man, I'm getting drunk.)"
+    });
+    await dialogue({
+      name: 'David',
+      thought: true,
+      text: "(I can't find Aida, and I can't find her contact in my phone to text her.)"
+    });
+    await dialogue({
+      name: 'David',
+      text: '(I ordered a cab because I was starting to feel nauseous. But I was super sad that I lost you.)'
     });
     setAffection(1);
     sfx.heart();
@@ -920,11 +904,11 @@ const mission3 = {
   id: 'm3',
   chapter: 'III',
   when: 'A few nights later',
-  title: "Lisa's Place",
+  title: "Liza's Place",
   briefing:
-    "Lisa's flat on Patriki. A film with the sound off. A bottle of wine on the table and the lamp turning everything red.\n\nYou and me, finally, with nothing to do but talk.\n\nI asked about your favourite movie. I already knew the answer.",
+    "Soon we met at Liza's place. That's the first time we really got to just hang out and chat.\n\nThat's when I realized there's more to you than what first meets the eye\u2026",
   outro:
-    "(Same films. Same painters. The same way of going quiet when a song you love comes on.)\n\nI shuffled the cards and dealt three. I swear I didn't cheat.",
+    "Every new day that I spent hanging out with you and looking at you, I became more and more obsessed\u2026",
   audioLoop: 'apartment',
   buildScene() {
     // Lisa's flat on Patriki — small, low-lit, dark red rug, black couch
@@ -955,7 +939,7 @@ const mission3 = {
       heroSprite: 'aida',
       npcs: [
         { id: 'paladin', x: 10, y: 7, sprite: 'pal', facing: 'left', name: 'David' },
-        { id: 'lisa',    x: 13, y: 12, sprite: 'lisa', facing: 'up', name: 'Lisa' }
+        { id: 'lisa',    x: 13, y: 12, sprite: 'lisa', facing: 'up', name: 'Liza' }
       ],
       waypoints: []
     };
@@ -963,156 +947,71 @@ const mission3 = {
   async play({ dialogue, setAffection, sfx, delay, mission }) {
     await delay(300);
     await dialogue({
-      portrait: 'lisa',
-      name: 'Lisa',
-      text: "Drinks. Film. I'll sit over here and pretend not to watch you two."
+      name: 'Liza',
+      text: "I'll sit over here and pretend not to watch you two."
     });
     await dialogue({
-      portrait: 'paladin',
       name: 'David',
-      text: "So \u2014 what's your favourite movie?"
+      text: "So, what's your favourite movie?"
     });
-    const fav = await dialogue({
-      portrait: 'aida',
+    await dialogue({ name: 'Aida', text: 'The Lord of the Rings.' });
+    await dialogue({ name: 'David', text: 'Wowy.' });
+    await dialogue({
+      name: 'David',
+      text: "(That's when I realized you weren't the person I thought you were\u2026)"
+    });
+
+    // --- HER TURN: she asks David back. ---
+    await delay(220);
+    const askIdx = await dialogue({
       name: 'Aida',
-      text: '(Easy.)',
+      text: 'My turn. Ask me something, or I\u2019ll ask you.',
       choices: [
-        'The Lord of the Rings.',
-        'Solaris.',
-        'Something with Audrey Hepburn.'
+        "What's your favourite movie?",
+        "What's your favourite game?",
+        "What's your favourite book?"
       ]
     });
-    const lotrPicked = fav === 0;
-    if (lotrPicked) {
-      await dialogue({
-        portrait: 'paladin',
-        name: 'David',
-        text: 'Lord of the Rings. \u2014 Cool.'
-      });
-      await dialogue({
-        portrait: 'aida',
-        name: 'Aida',
-        text: '(He said it like he meant it.)'
-      });
-    } else {
-      await dialogue({
-        portrait: 'paladin',
-        name: 'David',
-        text: 'Good answer. \u2014 Mine is Lord of the Rings, actually.'
-      });
-    }
-    await delay(220);
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: "Can I read your cards? I brought a deck."
-    });
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: '(A tarot reading. On the second meeting.)',
-      choices: ['Read them.', 'Only if you\u2019re good.']
-    });
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: '(He shuffles. Deals three. Looks at them. Looks at you.)'
-    });
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: 'The Lovers. The Star. The Fool.'
-    });
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: '(That can\u2019t be a coincidence.)'
-    });
-    await delay(260);
+    const davidAnswer = [
+      'The Apartment.',
+      'Red Dead Redemption.',
+      'Aret\u00e9 by Brian Johnson.'
+    ][askIdx] || 'The Apartment.';
+    await dialogue({ name: 'David', text: davidAnswer });
 
-    // Match-the-pair mini-game — 4 rounds.
+    // --- I ORIGINS META BEAT ---
+    await delay(200);
     await dialogue({
-      portrait: 'paladin',
       name: 'David',
-      text: "Okay \u2014 I name something, you tell me if you love it or hate it. Then I\u2019ll guess yours."
+      text: 'Any movie recommendations?'
     });
-    const questions = [
-      {
-        prompt: "Frodo or Aragorn?",
-        options: ["Frodo.", "Aragorn."],
-        answer: 1,
-        right: "Knew it. Ranger energy.",
-        wrong: "Oh \u2014 fine, we\u2019ll argue about this later."
-      },
-      {
-        prompt: "A quiet Sunday \u2014 Klimt or Schiele?",
-        options: ["Klimt, please.", "Schiele. Always Schiele."],
-        answer: 1,
-        right: "The nerves. The hands. Of course.",
-        wrong: "Alright, noted. Klimt works too."
-      },
-      {
-        prompt: "Album on repeat \u2014 Mills Brothers or Guns N' Roses?",
-        options: ["Mills Brothers.", "Guns N' Roses."],
-        answer: 1,
-        right: "Metalhead energy. Approved.",
-        wrong: "Jazz it is. I'll learn."
-      },
-      {
-        prompt: "Moscow winter \u2014 stay in or go to Patriki?",
-        options: ["Stay in, with a book.", "Patriki, with coffee."],
-        answer: 0,
-        right: "Same. The book wins.",
-        wrong: "Patriki it is \u2014 I know a place."
-      }
-    ];
-    let score = 0;
-    for (const q of questions) {
-      // David asks the question — no choices here.
-      await dialogue({
-        portrait: 'paladin',
-        name: 'David',
-        text: q.prompt
-      });
-      // Aida is the one answering — the choices belong in HER bubble.
-      const c = await dialogue({
-        portrait: 'aida',
-        name: 'Aida',
-        text: '\u2026',
-        choices: q.options
-      });
-      if (c === q.answer) {
-        score++;
-        sfx.chime();
-        mission.spawnHeart(mission.hero.px + 8, mission.hero.py - 4);
-        await dialogue({
-          portrait: 'aida',
-          name: 'Aida',
-          text: q.right
-        });
-      } else {
-        await dialogue({
-          portrait: 'aida',
-          name: 'Aida',
-          text: q.wrong
-        });
-      }
-    }
-    const affectionEarned = Math.min(3, 2 + Math.floor(score / 2));
-    setAffection(affectionEarned);
-    if (score >= 3) {
-      await dialogue({
-        portrait: 'paladin',
-        name: 'David',
-        text: "(He watches you longer than necessary. You don\u2019t look away.)"
-      });
-    } else {
-      await dialogue({
-        portrait: 'paladin',
-        name: 'David',
-        text: "(He laughs. He actually laughs. That\u2019s new.)"
-      });
-    }
+    await dialogue({
+      name: 'Aida',
+      text: "I Origins. It's an amazing movie. I really recommend it."
+    });
+    // David's voice-over to real-life Aida — break the fourth wall a little.
+    await dialogue({
+      name: 'David',
+      text: "(I still haven't seen it to this day\u2026 which is why we are watching it tonight!!!)"
+    });
+    await dialogue({
+      name: 'David',
+      text: '(Ok, back to the story\u2026)'
+    });
+
+    // --- CLOSER + LIZA PUNCHLINE ---
+    await delay(200);
+    await dialogue({
+      name: 'David',
+      text: 'You know what? You are an interesting person.'
+    });
+    await dialogue({
+      name: 'Liza',
+      text: 'Guys, stop having fun. Can we please discuss me and my problems?'
+    });
+    setAffection(3);
+    sfx.heart();
+    mission.spawnHeart(mission.hero.px + 8, mission.hero.py - 4);
     await delay(400);
   }
 };
@@ -1130,9 +1029,9 @@ const mission3b = {
   when: 'Later that same night',
   title: 'Dinner, Before the Pharmacy',
   briefing:
-    "Then a long table off Nikitskaya. Lisa and Katya across, Maha at the head, the two of us sitting too close on the same side.\n\nYour shoulder kept bumping mine. Neither of us moved away.\n\nYou kept saying you were fine. You weren't.",
+    "I remember the day you started getting sick\u2026",
   outro:
-    "(The shots didn't work. I could see it in your face.)\n\nI put on my coat. I told you the pharmacy was two blocks over \u2014 mostly as an excuse to get you outside with me.",
+    "I loved that we were spending time together, but I was worried you were feeling bad.",
   audioLoop: 'apartment',
   buildScene() {
     // Restaurant — warm palette, dinner table centred, chairs on 4 sides.
@@ -1170,7 +1069,7 @@ const mission3b = {
         // David — right next to Aida.
         { id: 'paladin', x: 5, y: 8, sprite: 'pal', facing: 'right', name: 'David' },
         // Lisa + Katya across from them.
-        { id: 'lisa',    x: 12, y: 7, sprite: 'lisa',   facing: 'left', name: 'Lisa' },
+        { id: 'lisa',    x: 12, y: 7, sprite: 'lisa',   facing: 'left', name: 'Liza' },
         { id: 'katya',   x: 12, y: 8, sprite: 'lisa',   facing: 'left', name: 'Katya' },
         // Maha at the head of the table.
         { id: 'maha',    x: 9, y: 4, sprite: 'maha',   facing: 'down', name: 'Maha' }
@@ -1181,31 +1080,29 @@ const mission3b = {
   async play({ mission, dialogue, sfx, delay, spawnHeart, actionButton, setAffection }) {
     await delay(260);
     await dialogue({
-      name: 'Lisa',
-      text: 'Are you two starting to come down with something? You look flushed.'
+      name: 'David',
+      text: '(You sat right next to me. I was looking straight ahead, but really all I was thinking about was you sitting next to me with your big beautiful eyes.)'
+    });
+    await dialogue({ name: 'Liza',  text: 'Who wants Bellini?' });
+    await dialogue({ name: 'David', text: "I'll try it." });
+    await dialogue({
+      name: 'David',
+      text: 'Omg, this is so delicious, wtf?!'
     });
     await dialogue({
       name: 'Aida',
-      text: '(Your throat is glass. You\u2019re fine. You\u2019re fine.)'
+      text: "I'm not feeling well. I think I'll drink vodka."
     });
-    await dialogue({
-      name: 'Katya',
-      text: 'Shots. Shots are the cure. Everyone knows.'
-    });
-    await dialogue({
-      name: 'Maha',
-      text: '(Pours one. Slides it toward you.)'
-    });
+    await dialogue({ name: 'Liza', text: 'Yeah, great idea.' });
 
-    // Shot mini-game — three quick shots while she still can.
+    // Shot mini-game — three quick vodka shots.
     const shots = await actionButton({
       label: '\uD83E\uDD43 Vodka',
-      subtitle: 'You insist you\u2019re fine.',
+      subtitle: 'Three.',
       target: 3
     });
     const aida = mission.hero;
     const david = mission.npcs.get('paladin');
-    // Blush particles on BOTH Aida and David (small pink hearts at their cheeks).
     for (let i = 0; i < shots; i++) {
       setTimeout(() => {
         spawnHeart(aida.px + 8, aida.py - 2);
@@ -1213,25 +1110,10 @@ const mission3b = {
       }, i * 140);
     }
     sfx.heart();
-    await dialogue({
-      name: 'Aida',
-      text: '(Your face is hot. His too. You can tell.)'
-    });
+
     await dialogue({
       name: 'David',
-      text: '(He leans in, whispers.) You okay? You\u2019re shaking.'
-    });
-    await dialogue({
-      name: 'Aida',
-      text: 'I\u2019m fine. I\u2019m a LIAR. I\u2019m fine.'
-    });
-    await dialogue({
-      name: 'David',
-      text: "The pharmacy\u2019s only two blocks. Let\u2019s step out \u2014 I\u2019ll walk you."
-    });
-    await dialogue({
-      name: 'Lisa',
-      text: 'Go, go. We\u2019ll hold the table.'
+      text: "The pharmacy's only two blocks. Let's step out, I'll walk you."
     });
     setAffection(2);
     await delay(300);
@@ -1248,9 +1130,9 @@ const mission4 = {
   when: 'The walk to the pharmacy',
   title: 'The Pharmacy Walk',
   briefing:
-    "We went out into the snow. Bolshaya Nikitskaya was empty. Yellow streetlamps, old buildings, one or two cars going past.\n\nThe pharmacy was at number thirteen. I had no idea if it would be open.\n\nYou were so quiet. Your hand was cold.",
+    "This is our first walk together, just the two of us. It kinda felt like a date.",
   outro:
-    "(Closed. Of course it was closed.)\n\nOn the walk back I put my hand on your back, then your neck. You didn't move away. By the time we got inside, you were burning up.",
+    "The pharmacy was closed. Our hearts weren't.",
   audioLoop: 'sickbed',
   buildScene() {
     // Bolshaya Nikitskaya 13, Moscow, January night. Brick buildings on the
@@ -1324,78 +1206,22 @@ const mission4 = {
       setTimeout(snowTick, 140);
     })();
     await delay(300);
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: "(Your throat is glass. The vodka didn't help.)"
-    });
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: "Come on \u2014 I'll walk you. Two blocks."
-    });
 
-    // David follows a tile behind her as she walks.
+    // David follows a tile behind her as she walks to the pharmacy.
     const follow = setInterval(() => {
       if (!mission.npcs.get('paladin')) { clearInterval(follow); return; }
       const h = mission.hero;
       mission.moveNpcTo('paladin', Math.max(0, h.gx - 1), h.gy);
     }, 900);
 
-    // Stroll past the lamps — each lamp = a small beat of dialogue.
-    // Hints land on WALKABLE sidewalk tiles so Aida can actually reach them.
-    mission.setHint(5, 7);
-    await mission.waitForWaypoint('lamp1');
-    mission.clearHint();
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: "You alright? You're a bit quiet."
-    });
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: "I'm fine. I'm always fine. It's a trick."
-    });
-
-    mission.setHint(11, 7);
-    await mission.waitForWaypoint('lamp2');
-    mission.clearHint();
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: "(Puts a hand on your back. Then your neck. Quiet.)"
-    });
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: "(Not expected. Not unwelcome.)"
-    });
-    spawnHeart(mission.hero.px + 8, mission.hero.py - 4);
-    sfx.heart();
-
+    // --- Walk to the pharmacy. Hint points at the door. ---
     mission.setHint(18, 4);
     await mission.waitForWaypoint('pharmacy');
     mission.clearHint();
-    // Pharmacy door — closed.
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: "\u2014 of course it's closed."
-    });
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: '(You laugh. It hurts your chest.)'
-    });
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: "Come on. I'll walk you back."
-    });
+
+    await dialogue({ name: 'David', text: "Oh no, it's closed." });
+
     // --- WALK BACK — the long way home. ---
-    // Re-aim the follow so David stays one tile to her RIGHT now that she
-    // is walking left.
     clearInterval(follow);
     const followBack = setInterval(() => {
       if (!mission.npcs.get('paladin')) { clearInterval(followBack); return; }
@@ -1406,20 +1232,15 @@ const mission4 = {
     await mission.waitForWaypoint('back-home');
     mission.clearHint();
     clearInterval(followBack);
+
+    // The hand-on-neck moment, as David remembers it.
     await dialogue({
-      portrait: 'paladin',
       name: 'David',
-      text: 'I should have checked the hours before we walked.'
+      text: '(I put my hand on your neck, and it was the best feeling in the world.)'
     });
     await dialogue({
-      portrait: 'aida',
       name: 'Aida',
-      text: 'You wanted to get me out of there.'
-    });
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: '\u2026 yeah. I did.'
+      text: "(Wow, he's touching me. I'll allow it\u2026)"
     });
     spawnHeart(mission.hero.px + 8, mission.hero.py - 4);
     setAffection(3);
@@ -1439,9 +1260,9 @@ const mission5Fever = {
   when: 'Three days, one screen',
   title: 'Forty Degrees',
   briefing:
-    "You went home to Presnya. Forty of fever. The flat quiet, the phone the only light in the room.\n\nFor three days we only had each other through a screen.\n\nYou promised me you'd stop believing in magic if it didn't break by Sunday.",
+    "My poor baby got sick. And I couldn't come help you.\n\nAt least your mom made you soup.\n\nAll I could do was pray. And text\u2026",
   outro:
-    "(It broke. You got up. You called me Davidka for the first time.)\n\nThere was one thing left to do \u2014 find each other in a room, not through glass.",
+    "You called me Davidka for the first time, and my heart skipped a beat.",
   audioLoop: 'sickbed',
   buildScene() {
     // Split-screen: Aida's room on Presnya (left) · wall · David near TSUM (right)
@@ -1483,16 +1304,18 @@ const mission5Fever = {
   async play({ dialogue, phone, sfx, spawnHeart, delay }) {
     await delay(600);
     await dialogue({
-      portrait: 'aida',
+      name: 'David',
+      text: '(Please answer the phone.)'
+    });
+    await dialogue({
       name: 'Aida',
-      text: '(Fever of 40. Everything tastes like paper.)'
+      text: '(Why me.)'
     });
     await delay(300);
     sfx.blip();
     await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: '(Your phone buzzes.)'
+      name: 'David',
+      text: '(Phone buzzes\u2026)'
     });
     await phone({
       contactName: 'David',
@@ -1542,9 +1365,9 @@ const mission6MoBar = {
   when: 'The first date',
   title: 'Mo Bar',
   briefing:
-    "The plan was Secret. We landed at Mo Bar instead.\n\nMirrored walls, one DJ playing for absolutely nobody, the colour of the lights the kind a child picks when they're happy.\n\nOur first date \u2014 just us, as if the whole room had been waiting.",
+    "I was so happy when you finally got better.\n\nBut I was even more happy when you agreed to come meet me. On our first date\u2026",
   outro:
-    "(You told me about the character in your favourite book. The one who was a nerve too sensitive. You said that's you.)\n\nI thought: that's me too, in my own way. I told you we had leftovers to drop off at mine.",
+    "You were so beautiful that night. All I wanted in that moment was to kiss you.",
   audioLoop: 'bar',
   // Dark room + drifting colored lights = Mo Bar's disco-ball feel.
   effects: ['disco'],
@@ -1585,19 +1408,18 @@ const mission6MoBar = {
   async play({ mission, dialogue, setAffection, sfx, delay }) {
     await delay(240);
     await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: "(The room is empty. One DJ. Just us.)"
+      name: 'David',
+      text: '(The room is empty. One DJ. Just us.)'
     });
     mission.setHint(12, 7);
-    // A few hearts on the way to make it playful.
     mission.spawnHeartPickup(5, 10, () => setAffection(3));
     mission.spawnHeartPickup(9, 8, () => setAffection(3));
     await mission.waitForWaypoint('the-table');
     mission.clearHint();
     sfx.select();
+    await dialogue({ name: 'David', text: 'Aidka! Hi!!!' });
+    await dialogue({ name: 'Aida',  text: 'Hey!' });
     await dialogue({
-      portrait: 'paladin',
       name: 'David',
       text: "I picked somewhere quiet. Figured you'd hate a crowd on a first date."
     });
@@ -1664,9 +1486,9 @@ const mission7Apartment = {
   when: 'The long evening at mine',
   title: 'His Apartment',
   briefing:
-    "You came up for one minute. Just to drop the food.\n\nThere was a guitar on the couch. A piano in the corner. The TV across the room. The Christmas tree still blinking.\n\nWe didn't leave for hours.",
+    "We came up for one minute. Just to drop the food.\n\nBut there was a guitar on the couch and a piano by the Christmas tree\u2026",
   outro:
-    "(Guitar. Piano. A cheek, a thank-you, and then later \u2014 the record.)\n\nThe Mills Brothers. The rug. A kiss against the wall.\n\nAnd then someone knocked.",
+    "I will never forget that moment for the rest of my life.",
   audioLoop: 'apartment',
   // First half of the night — warm lamp glow from next to the piano.
   effects: ['lampglow'],
@@ -1761,9 +1583,8 @@ const mission7Apartment = {
     stopSpotlight();
     setSceneEffects(['lampglow']);
     await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: "(You look at him differently. You can\u2019t help it.)"
+      name: 'David',
+      text: '(I remember you looked at me completely differently once I started playing.)'
     });
     spawnHeart(mission.hero.px + 8, mission.hero.py - 2);
     sfx.heart();
@@ -1798,16 +1619,7 @@ const mission7Apartment = {
     mission.setHeroFacing('right');
     mission.setHeroSprite('aida1'); // sitting at the piano
     sfx.chime();
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: 'Play the one we sang in the car.'
-    });
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: "\u201cI Think I\u2019m in Love with My Best Friend\u201d? You\u2019re dangerous."
-    });
+    // David plays "Lonely" for her on the piano.
     audio.bestFriend();
     for (let i = 0; i < 12; i++) {
       setTimeout(
@@ -1815,12 +1627,17 @@ const mission7Apartment = {
         i * 380
       );
     }
-    await delay(4600);
+    await delay(2200);
     await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: '(You sang the second verse with him. Neither of you mentioned it after.)'
+      name: 'David',
+      text: '(I played Lonely for you, and you seemed very happy.)'
     });
+    await dialogue({
+      name: 'Aida',
+      thought: true,
+      text: "(I can't believe he can play piano!)"
+    });
+    await delay(1500);
 
     // --- He pulls her chair closer before leaning in ---
     await dialogue({
@@ -1840,24 +1657,18 @@ const mission7Apartment = {
     sfx.chime();
     await delay(260);
     await dialogue({
-      portrait: 'paladin',
       name: 'David',
-      text: '(He\u2019s looking at you instead of the keys. He leans in.)'
+      text: "(He's looking at you instead of the keys. He leans in.)"
     });
     await delay(400);
-    // --- CHEEK KISS — no multiple choice here (she chooses with her face). ---
+    // --- CHEEK KISS — single beat. ---
     await dialogue({
-      portrait: 'aida',
       name: 'Aida',
-      text: '(You turn your cheek. Say thank you.)'
+      thought: true,
+      text: '(OMG.)'
     });
+    await dialogue({ name: 'Aida', text: 'Thank you.' });
     await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: 'Thank you.'
-    });
-    await dialogue({
-      portrait: 'paladin',
       name: 'David',
       text: "I'm not trying anything. I promise."
     });
@@ -1868,7 +1679,7 @@ const mission7Apartment = {
     // lights do the heavy lifting. Moodier, dimmer.
     fadeTo(1, 900);
     await delay(1100);
-    await fadeText('\u2014 later that night \u2014', { duration: 2400 });
+    await fadeText('later that night', { duration: 2400 });
     // Swap the scene lighting: lamp off, TV + tree glow.
     setSceneEffects(['moodynight']);
     fadeTo(0, 700);
@@ -1894,25 +1705,17 @@ const mission7Apartment = {
     await mission.waitForWaypoint('record-player');
     mission.clearHint();
     sfx.select();
-    const c = await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: '(The Mills Brothers. Of course.)',
-      choices: ['Press play.', '\u25B6 Play the real thing on YouTube.']
-    });
-    if (c === 1) {
-      window.open(
-        'https://www.youtube.com/results?search_query=mills+brothers+till+then',
-        '_blank',
-        'noopener'
-      );
-    }
-
-    // --- SHOTS before Mills Brothers — he pours two. ---
     await dialogue({
-      portrait: 'paladin',
+      name: 'Aida',
+      thought: true,
+      text: "(I wonder what he's gonna play.)",
+      choices: ['Press play.']
+    });
+
+    // --- SHOTS before the record — he pours two. ---
+    await dialogue({
       name: 'David',
-      text: 'Wait \u2014 one more shot first. It\u2019s the rule.'
+      text: "Wait, one more shot first. It's the rule."
     });
     const shotsAct3 = await actionButton({
       label: '\uD83E\uDD43 Shot',
@@ -1954,45 +1757,26 @@ const mission7Apartment = {
     mission.setHeroFacing('right');
     await delay(600);
     await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: '(He puts a hand on your waist. You put yours on his shoulder. You sway.)'
+      name: 'David',
+      text: '(I put my hand on your waist.)'
     });
-    await delay(600);
+    await delay(400);
     for (let i = 0; i < 6; i++) {
       setTimeout(
         () => mission.spawnMusicNote((7 + (i % 2)) * 16 + Math.random() * 4, 7 * 16),
         i * 220
       );
     }
-    await delay(900);
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: 'This is stupid.'
-    });
-    await delay(260);
-    await dialogue({
-      portrait: 'paladin',
-      name: 'David',
-      text: 'Yeah.'
-    });
-    await delay(260);
+    await delay(800);
 
-    // --- FINAL KISS CHOICE — keep dancing, or finally kiss him. ---
-    const finalChoice = await dialogue({
-      portrait: 'aida',
+    // Aida's dance choice. Either option leads to the top-left kiss.
+    const danceChoice = await dialogue({
       name: 'Aida',
-      text: '(It\u2019s now or another song.)',
-      choices: ['Keep dancing.', 'Finally kiss David.']
+      text: '\u2026',
+      choices: ['This is stupid.', 'Keep dancing.']
     });
-    if (finalChoice === 0) {
-      // One more turn on the rug, then the kiss anyway.
-      await dialogue({
-        portrait: 'aida',
-        name: 'Aida',
-        text: '(One more turn. One more. Okay \u2014 now.)'
-      });
+    if (danceChoice === 1) {
+      // One more turn on the rug.
       for (let i = 0; i < 4; i++) {
         setTimeout(
           () => mission.spawnMusicNote((7 + (i % 2)) * 16, 7 * 16 - 2),
@@ -2022,16 +1806,10 @@ const mission7Apartment = {
     await delay(500);
 
     await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: '(Your back\u2019s against the wall. His hand\u2019s on your jaw.)'
+      name: 'David',
+      text: '(OMG.)'
     });
     await delay(300);
-    await dialogue({
-      portrait: 'aida',
-      name: 'Aida',
-      text: '(She kisses him.)'
-    });
     // Soft hearts + fireworks only — no god rays.
     const burstAt = (x, y, delayMs) => {
       setTimeout(() => {
@@ -2066,9 +1844,9 @@ const mission10Knock = {
   when: 'Still that same night',
   title: 'The Knock',
   briefing:
-    "The record got to the end of its side and the room went quiet.\n\nThen three thumps at the door.\n\nNeither of us had invited anybody.",
+    "The last song on the album played and the room went quiet.\n\nThen we heard three knocks at the door.\n\nNeither of us had invited anybody.",
   outro:
-    "(Every fairy tale has a monster. We took turns with ours.)\n\nThe room went quiet again. The tree kept blinking.\n\nWe were both fine. We were both here.",
+    "Every fairy tale has a monster.\n\nThe room went quiet again, the tree kept blinking.\n\nAnd from that moment on, I knew you are the girl of my dreams and the love of my life.\n\nAida, you are the best thing that has ever happened to me.\n\nI love you more than life \u2764\uFE0F",
   audioLoop: 'apartment',
   // Finale keeps the moody TV + tree lighting from the kiss.
   effects: ['moodynight'],
@@ -2130,9 +1908,9 @@ const mission10Knock = {
       text: "Someone\u2019s at the door. At this hour."
     });
     await dialogue({
-      portrait: 'aida',
       name: 'Aida',
-      text: "(Walk to the door.)"
+      thought: true,
+      text: '(I wonder who that is.)'
     });
 
     mission.setHint(1, 8);
@@ -2149,7 +1927,7 @@ const mission10Knock = {
       x: 1, y: 8,
       sprite: 'lisa',
       facing: 'right',
-      name: 'Lisa'
+      name: 'Liza'
     });
     await delay(250);
     // She walks a few tiles in — still as Lisa.
@@ -2157,7 +1935,7 @@ const mission10Knock = {
 
     await dialogue({
       portrait: 'lisa',
-      name: 'Lisa',
+      name: 'Liza',
       text: "Guys\u2026 I came from the club\u2026 something\u2019s wrong\u2026"
     });
     await dialogue({
@@ -2170,7 +1948,7 @@ const mission10Knock = {
     await mission.moveNpcTo('lisa', 5, 8);
     await dialogue({
       portrait: 'lisa',
-      name: 'Lisa',
+      name: 'Liza',
       text: 'I don\u2019t feel\u2026 I don\u2019t feel like\u2026 me.'
     });
     await delay(400);
@@ -2219,14 +1997,13 @@ const mission10Knock = {
     setCameraZoom(1.6);
     setCameraTarget(mission.hero);
     await dialogue({
-      portrait: 'lisa-zombie',
-      name: 'Lisa',
-      text: 'RRRGGGHHHHHHH\u2014 AIIIIIDDAAAAA\u2026'
+      name: 'Liza',
+      text: 'RRRGGGHHHHHHH, AIIIIIDDAAAAA\u2026'
     });
     await dialogue({
-      portrait: 'aida',
       name: 'Aida',
-      text: "(She\u2019s TWICE her size. Dodge the fire. Click her to strike.)"
+      thought: true,
+      text: "(She's TWICE her size.)"
     });
 
     // ==============================================================
@@ -2421,27 +2198,27 @@ export const credits = {
     { heading: true, text: 'Cast' },
     { text: 'Aida' },
     { text: 'David' },
-    { text: 'Lisa  \u2014  keeper of Balagan' },
-    { text: 'Maha  \u2014  (not the Wolverine)' },
-    { text: 'The Mills Brothers  \u2014  playing somewhere else' },
+    { text: 'Liza  (keeper of Balagan)' },
+    { text: 'Maha  (not the Wolverine)' },
+    { text: 'The Mills Brothers  (playing somewhere else)' },
     { text: '' },
     { heading: true, text: 'Places' },
-    { text: 'Balagan  \u2014  the back room' },
-    { text: 'Balagan  \u2014  the dance floor, New Year\u2019s' },
+    { text: 'Balagan, the back room' },
+    { text: "Balagan, the dance floor, New Year's" },
     { text: 'A flat on Patriki' },
     { text: 'Bolshaya Nikitskaya 13' },
-    { text: 'Presnya  \u2014  a room with a fever' },
-    { text: 'Mo Bar  \u2014  mirrored, empty, ours' },
+    { text: 'Presnya, a room with a fever' },
+    { text: 'Mo Bar, mirrored, empty, ours' },
     { text: 'Our place, with a Christmas tree' },
     { text: '' },
     { heading: true, text: 'Soundtrack' },
     { text: 'Sweet Child O\u2019 Mine' },
-    { text: 'I Think I\u2019m in Love with My Best Friend' },
-    { text: 'Till Then  \u2014  the Mills Brothers,' },
+    { text: 'Lonely' },
+    { text: 'Till Then, the Mills Brothers,' },
     { text: 'somewhere else, in your memory' },
     { text: '' },
     { heading: true, text: 'With love' },
-    { text: 'to Aida  \u2014  for "are you serious"' },
+    { text: 'to Aida, for "are you serious"' },
     { text: 'and laughing anyway.' },
     { text: 'For "this is stupid"' },
     { text: 'and the kiss.' },

@@ -684,7 +684,7 @@ async function runCampaign(startIndex = 0, opts = {}) {
       const map = {
         'Aida': 'hero',
         'David': 'paladin',
-        'Lisa': 'lisa',
+        'Liza': 'lisa',
         'Maha': 'maha',
         'Employee': 'smoker',
         'DJ': 'dj',

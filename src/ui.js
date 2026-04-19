@@ -95,8 +95,8 @@ export function showTitle({ hasSave, openingNote } = {}) {
           <div class="card-border"></div>
           <div class="card-front-inner">
             <div class="card-heart">💜</div>
-            <div class="card-cover-title">Happy<br/>Birthday,<br/>Aidka</div>
-            <div class="card-cover-sub">a little note from David</div>
+            <div class="card-cover-title">Happy<br/>Birthday<br/>Aidka</div>
+            <div class="card-cover-sub">I wrote you a little note\u2026</div>
             <button class="wc-btn card-open-btn" data-action="open">Open</button>
           </div>
         </div>
@@ -133,14 +133,11 @@ export function showTitle({ hasSave, openingNote } = {}) {
 }
 
 const DEFAULT_NOTE = `
-<p>Aidka —</p>
-<p>Happy birthday.</p>
-<p>I wrote you a little thing. Just a card with
-a lot of pages — every memory from the nights between
-Dec 31 and Jan 7. Silver pants included.</p>
-<p>If I forgot anything important, it's in there
-somewhere. Probably behind a piano.</p>
-<p>I love you.</p>
+<p>You are the girl of my dreams and I love you more than the world.</p>
+<p>My love grows for you every minute of every day. When I think about
+you I feel warm and happy. You are my sunshine.</p>
+<p>Meeting you was the best thing that ever happened to me!</p>
+<p>And it was a magical time&hellip;</p>
 `;
 
 // ---------------------------------------------------------------------------
