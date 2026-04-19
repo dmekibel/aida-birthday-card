@@ -1763,65 +1763,34 @@ const mission7Apartment = {
       name: 'David',
       text: 'Come here.'
     });
-    // David WALKS from the bottom couch up to the middle of the rug.
+
+    // --- DAVID WALKS TO THE TOP-LEFT CORNER FIRST ---
+    // He steps off the bottom couch and walks all the way to (3, 1).
     mission.setNpcSprite('paladin', 'pal');
     mission.setNpcPos('paladin', 9, 10, 'up');
-    await mission.moveNpcTo('paladin', 8, 7);
-    mission.setHint(7, 7);
-    await mission.waitForWaypoint('rug-center');
-    mission.clearHint();
-    mission.setNpcFacing('paladin', 'left');
-    mission.setHeroFacing('right');
-    await delay(600);
-    await dialogue({
-      name: 'David',
-      text: '(I put my hand on your waist.)'
-    });
-    await delay(400);
-    for (let i = 0; i < 6; i++) {
-      setTimeout(
-        () => mission.spawnMusicNote((7 + (i % 2)) * 16 + Math.random() * 4, 7 * 16),
-        i * 220
-      );
-    }
-    await delay(800);
+    await mission.moveNpcTo('paladin', 3, 1);
+    mission.setNpcFacing('paladin', 'right');
 
-    // Aida's dance choice. Either option leads to the top-left kiss.
-    const danceChoice = await dialogue({
-      name: 'Aida',
-      text: '\u2026',
-      choices: ['This is stupid.', 'Keep dancing.']
-    });
-    if (danceChoice === 1) {
-      // One more turn on the rug.
-      for (let i = 0; i < 4; i++) {
-        setTimeout(
-          () => mission.spawnMusicNote((7 + (i % 2)) * 16, 7 * 16 - 2),
-          i * 240
-        );
-      }
-      await delay(1000);
-    }
-
-    // Both WALK to the TOP-LEFT corner — no teleports, they walk together.
+    // --- AIDA FOLLOWS HIM UP ---
+    // Waypoint is (2, 1) — the tile directly next to David. Player clicks
+    // or presses Space to walk there.
     mission.setHint(2, 1);
-    // Kick David off on his walk first so he goes in parallel.
-    mission.moveNpcTo('paladin', 3, 1);
-    // Aida walks to (2, 1) via the waypoint hint — player can also just click.
     await mission.waitForWaypoint('kiss-corner');
     mission.clearHint();
-    // If David hasn't finished walking yet, wait a moment for him to catch up.
-    let tries = 0;
-    while (tries < 12) {
-      const d = mission.npcs.get('paladin');
-      if (d && d.gx === 3 && d.gy === 1) break;
-      await delay(200);
-      tries++;
-    }
-    mission.setNpcFacing('paladin', 'left');
     mission.setHeroFacing('right');
-    await delay(500);
+    await delay(600);
 
+    // --- "THIS IS STUPID." + KISS BUTTON ---
+    await dialogue({ name: 'Aida', text: 'This is stupid.' });
+    await delay(200);
+    await dialogue({ name: 'David', text: 'Yeah.' });
+    await delay(260);
+    await dialogue({
+      name: 'Aida',
+      text: '\u2026',
+      choices: ['Kiss him.']
+    });
+    await delay(200);
     await dialogue({
       name: 'David',
       text: '(OMG.)'
