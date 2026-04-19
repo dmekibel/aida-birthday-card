@@ -351,6 +351,32 @@ function createMission(data) {
     else if (dy < 0) ent.facing = 'up';
     ent.stepT += ent.speed * dt;
     if (ent.stepT >= 1) {
+      // Stacking guard: if another entity has moved onto our next tile
+      // while we were walking, abort the step rather than overlapping them.
+      // Caller can click again to get a fresh path around the new blocker.
+      let blocked = false;
+      if (ent !== hero && hero.gx === next.x && hero.gy === next.y) {
+        blocked = true;
+      }
+      if (!blocked) {
+        for (const [, other] of npcs) {
+          if (other === ent) continue;
+          if (other.gx === next.x && other.gy === next.y) {
+            blocked = true;
+            break;
+          }
+        }
+      }
+      if (blocked) {
+        // Don't move. Drop the rest of the path and let the move resolver
+        // fire so waiting awaits don't hang.
+        ent.stepT = 0;
+        ent.path = [];
+        const r = ent.moveResolver;
+        ent.moveResolver = null;
+        r?.();
+        return;
+      }
       ent.stepT = 0;
       ent.gx = next.x;
       ent.gy = next.y;
@@ -854,7 +880,7 @@ async function runCampaign(startIndex = 0, opts = {}) {
       spawnMusicNote: mission.spawnMusicNote,
       spawnFirework: (x, y, opts) => spawnFirework(x, y, opts),
       godRays: (dur) => triggerGodRays(dur ?? 3000),
-      startSpotlight: (a, b) => startSpotlight({ a, b }),
+      startSpotlight: (a, b, opts = {}) => startSpotlight({ a, b, ...opts }),
       stopSpotlight,
       playAngelic,
       spawnTeardrop: (px, py) => {

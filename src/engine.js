@@ -51,8 +51,10 @@ export function triggerGodRays(durationMs = 3000) {
 // Positions are world coords (internal pixel space). Keeps running until stop.
 let spotlight = null;
 let spotlightCanvas = null;
-export function startSpotlight({ a, b }) {
-  spotlight = { a, b, started: performance.now() };
+// Optional `radius` — defaults to 22 (tight, single-chibi). The boss-fight
+// transformation uses a bigger radius so the 32x48 monster sprite is fully lit.
+export function startSpotlight({ a, b, radius = 22 }) {
+  spotlight = { a, b, radius, started: performance.now() };
 }
 export function stopSpotlight() {
   spotlight = null;
@@ -388,10 +390,11 @@ function tick(now) {
     sctx.fillRect(0, 0, INTERNAL_W, INTERNAL_H);
     sctx.globalCompositeOperation = 'destination-out';
     const drawLight = (p) => {
-      // Small, tight circle — just the character, no one near them.
-      const R = 22;
-      // Centre the pool on the torso/face so the whole 32px chibi is lit.
-      const cy = p.y - 6;
+      const R = spotlight.radius ?? 22;
+      // Centre the pool on the torso/face so the whole chibi is lit.
+      // Taller sprites want a higher centre — scale the vertical offset
+      // with the radius so a big-radius spot lines up with a tall sprite.
+      const cy = p.y - Math.max(6, Math.floor(R * 0.3));
       const g = sctx.createRadialGradient(p.x, cy, 2, p.x, cy, R);
       g.addColorStop(0, 'rgba(0,0,0,1)');
       g.addColorStop(0.6, 'rgba(0,0,0,0.92)');
@@ -408,12 +411,14 @@ function tick(now) {
     offCtx.save();
     offCtx.globalCompositeOperation = 'screen';
     const drawRim = (p) => {
-      const cy = p.y - 6;
-      const g = offCtx.createRadialGradient(p.x, cy, 8, p.x, cy, 28);
+      const R = spotlight.radius ?? 22;
+      const cy = p.y - Math.max(6, Math.floor(R * 0.3));
+      const rimR = R + 8;
+      const g = offCtx.createRadialGradient(p.x, cy, R * 0.4, p.x, cy, rimR);
       g.addColorStop(0, 'rgba(255, 226, 186, 0.26)');
       g.addColorStop(1, 'rgba(255, 220, 180, 0)');
       offCtx.fillStyle = g;
-      offCtx.fillRect(p.x - 32, cy - 32, 64, 64);
+      offCtx.fillRect(p.x - rimR - 2, cy - rimR - 2, rimR * 2 + 4, rimR * 2 + 4);
     };
     drawRim(spotlight.a);
     drawRim(spotlight.b);

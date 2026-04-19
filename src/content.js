@@ -1949,9 +1949,12 @@ const mission10Knock = {
     if (lisaNow) setCameraTarget(lisaNow);
     setCameraZoom(2.2);
     if (lisaNow) {
+      // Big radius — bigmon is 32x48, a tiny 22-radius spotlight only lit
+      // her feet. 50 lights her head-to-toe so the transformation is visible.
       startSpotlight(
         { x: lisaNow.px + 8, y: lisaNow.py + 2 },
-        { x: lisaNow.px + 8, y: lisaNow.py + 2 }
+        { x: lisaNow.px + 8, y: lisaNow.py + 2 },
+        { radius: 50 }
       );
     }
     sfx.groan();
